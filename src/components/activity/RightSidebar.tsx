@@ -41,7 +41,7 @@ const mockActivities = [
 
 export const RightSidebar = () => {
   return (
-    <div className="fixed right-0 top-0 h-screen w-[400px] bg-black/20 backdrop-blur-sm p-4 transform translate-x-[360px] hover:translate-x-0 transition-transform duration-300 ease-in-out border-l border-terminal-green/20 z-50">
+    <div className="fixed right-0 top-0 h-screen w-[400px] bg-black/20 backdrop-blur-sm p-4 transition-transform duration-300 ease-in-out border-l border-terminal-green/20 z-50 translate-x-[340px] hover:translate-x-0">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-terminal-green text-sm font-mono">Workspace Limits</h2>
         <span className="text-terminal-green/60 text-xs">Live Updates ●</span>
