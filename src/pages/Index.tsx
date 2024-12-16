@@ -133,28 +133,18 @@ const Index = () => {
   return (
     <div className="min-h-screen p-4 relative terminal-effect">
       <div className="matrix-rain" />
-      <div className="max-w-3xl mx-auto relative z-10">
-        <h1 className="text-lg mb-4">
+      <div className="max-w-2xl mx-auto relative z-10">
+        <h1 className="text-sm mb-4">
           {'>'} Workspace Command Center <span className="animate-blink">_</span>
         </h1>
 
-        <div className="flex items-center gap-2 mb-4">
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <TerminalInput
-                label="Add Workspace ID"
-                value={workspaceId}
-                onChange={setWorkspaceId}
-              />
-            </div>
-          </div>
-          <button
-            onClick={fetchData}
-            disabled={loading}
-            className="h-7 px-3 border border-terminal-green hover:bg-terminal-green hover:text-terminal-black transition-colors disabled:opacity-50 text-[10px]"
-          >
-            {loading ? '...' : '> Add'}
-          </button>
+        <div className="mb-4">
+          <TerminalInput
+            label="> Add Workspace ID"
+            value={workspaceId}
+            onChange={setWorkspaceId}
+            onSubmit={fetchData}
+          />
         </div>
 
         <div className="grid grid-cols-1 gap-2">
