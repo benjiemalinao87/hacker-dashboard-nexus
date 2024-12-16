@@ -7,12 +7,12 @@ import { supabase } from '@/integrations/supabase/client';
 interface WorkspaceData {
   name: string;
   plan: string;
-  botUsersUsed: number;
-  botUserLimit: number;
-  botsUsed: number;
-  botLimit: number;
-  membersUsed: number;
-  memberLimit: number;
+  bot_user_used: number;
+  bot_user_limit: number;
+  bot_used: number;
+  bot_limit: number;
+  member_used: number;
+  member_limit: number;
 }
 
 const Index = () => {
@@ -25,7 +25,7 @@ const Index = () => {
     setLoading(true);
     try {
       console.log('Fetching workspace data...');
-      const { data: proxyData, error } = await supabase.functions.invoke('workspace-proxy', {
+      const { data: response, error } = await supabase.functions.invoke('workspace-proxy', {
         body: { workspaceId, token }
       });
       
@@ -33,9 +33,23 @@ const Index = () => {
         throw new Error(error.message);
       }
       
-      console.log('Received data:', proxyData);
-      setData(proxyData);
-      toast.success('Data fetched successfully');
+      console.log('Received data:', response);
+      
+      if (response.data) {
+        setData({
+          name: response.data.name,
+          plan: response.data.plan,
+          bot_user_used: response.data.bot_user_used,
+          bot_user_limit: response.data.bot_user_limit,
+          bot_used: response.data.bot_used,
+          bot_limit: response.data.bot_limit,
+          member_used: response.data.member_used,
+          member_limit: response.data.member_limit
+        });
+        toast.success('Data fetched successfully');
+      } else {
+        throw new Error('Invalid response format');
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
       toast.error(error.message || 'Failed to fetch workspace data');
@@ -79,18 +93,18 @@ const Index = () => {
             
             <ProgressBar
               label="Bot Users"
-              used={data.botUsersUsed}
-              total={data.botUserLimit}
+              used={data.bot_user_used}
+              total={data.bot_user_limit}
             />
             <ProgressBar
               label="Bots"
-              used={data.botsUsed}
-              total={data.botLimit}
+              used={data.bot_used}
+              total={data.bot_limit}
             />
             <ProgressBar
               label="Members"
-              used={data.membersUsed}
-              total={data.memberLimit}
+              used={data.member_used}
+              total={data.member_limit}
             />
           </div>
         )}
