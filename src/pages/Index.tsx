@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { TerminalInput } from '../components/TerminalInput';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -97,43 +97,20 @@ const Index = () => {
     }
 
     setLoading(true);
-    const ids = workspaceId.split(',').map(id => id.trim()).filter(id => id);
-    console.log('Processing workspace IDs:', ids);
+    const id = workspaceId.trim();
+    console.log('Processing workspace ID:', id);
     
     try {
-      const newWorkspaces: Record<string, WorkspaceData> = {};
-      let successCount = 0;
-      let errorCount = 0;
-      
-      await Promise.all(
-        ids.map(async (id) => {
-          try {
-            const data = await fetchWithRetry(id);
-            newWorkspaces[id] = data;
-            successCount++;
-          } catch (error) {
-            console.error(`Error fetching data for workspace ${id}:`, error);
-            toast.error(`Failed to fetch workspace ${id}`);
-            errorCount++;
-          }
-        })
-      );
-      
-      if (successCount > 0) {
-        setWorkspaces(prev => ({
-          ...prev,
-          ...newWorkspaces
-        }));
-        setWorkspaceId('');
-        toast.success(`Added ${successCount} workspace(s) successfully`);
-      }
-      
-      if (errorCount > 0) {
-        toast.error(`Failed to fetch ${errorCount} workspace(s)`);
-      }
+      const data = await fetchWithRetry(id);
+      setWorkspaces(prev => ({
+        ...prev,
+        [id]: data
+      }));
+      setWorkspaceId('');
+      toast.success('Workspace added successfully');
     } catch (error) {
-      console.error('Error fetching data:', error);
-      toast.error(error.message || 'Failed to fetch workspace data');
+      console.error(`Error fetching data for workspace ${id}:`, error);
+      toast.error(`Failed to fetch workspace ${id}`);
     } finally {
       setLoading(false);
     }
@@ -161,7 +138,7 @@ const Index = () => {
 
         <div className="mb-4">
           <TerminalInput
-            label="> Add Workspace ID (separate multiple IDs with commas)"
+            label="> Enter Workspace ID"
             value={workspaceId}
             onChange={setWorkspaceId}
             onSubmit={addWorkspace}
