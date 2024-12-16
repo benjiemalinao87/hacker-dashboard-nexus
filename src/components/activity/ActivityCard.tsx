@@ -1,5 +1,5 @@
 import React from 'react';
-import { DollarSign, Users, Database, Wifi, HardDrive } from 'lucide-react';
+import { Users, Database, HardDrive, Wifi } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ActivityCardProps {
@@ -34,7 +34,7 @@ const getIcon = (type: string) => {
     case 'API Calls':
       return <Wifi className="w-4 h-4" />;
     default:
-      return <DollarSign className="w-4 h-4" />;
+      return <Users className="w-4 h-4" />;
   }
 };
 
@@ -46,7 +46,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
   userName,
 }) => {
   return (
-    <div className="bg-black/40 backdrop-blur-sm rounded-lg p-3 mb-2 hover:bg-black/60 transition-all duration-300 border border-terminal-green/20">
+    <div className="bg-black/40 backdrop-blur-sm rounded-lg p-3 mb-2 hover:bg-black/60 transition-all duration-300 border border-terminal-green/20 animate-fade-in">
       <div className="flex justify-between items-center mb-2">
         <div className="flex items-center gap-2">
           <span className={cn("px-2 py-0.5 rounded text-xs font-medium", getStatusColor(status))}>
@@ -60,13 +60,20 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
         </div>
       </div>
       
-      <div className="w-full bg-terminal-dim h-1.5 rounded-full mb-3">
+      <div className="w-full bg-terminal-dim h-1.5 rounded-full mb-3 overflow-hidden">
         <div 
           className={cn(
-            "h-full rounded-full transition-all duration-300",
-            percentage > 90 ? "bg-red-500" : percentage > 75 ? "bg-yellow-600" : "bg-terminal-green"
+            "h-full rounded-full transition-all duration-1000 ease-out",
+            percentage > 90 ? "bg-red-500" : percentage > 75 ? "bg-yellow-600" : "bg-terminal-green",
+            "relative after:absolute after:top-0 after:left-0 after:right-0 after:bottom-0",
+            "after:bg-gradient-to-r after:from-transparent after:via-terminal-green/30 after:to-transparent",
+            "after:animate-[shimmer_2s_infinite]"
           )}
-          style={{ width: `${percentage}%` }}
+          style={{ 
+            width: `${percentage}%`,
+            transform: 'translateX(0)',
+            animation: 'slideIn 1s ease-out'
+          }}
         />
       </div>
 

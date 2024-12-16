@@ -9,6 +9,7 @@ import { RotateCw } from 'lucide-react';
 import Globe from '@/components/Globe';
 import { RightSidebar } from '@/components/activity/RightSidebar';
 import { LimitWarningFooter } from '@/components/workspace/LimitWarningFooter';
+import { SidePanelProvider } from '@/contexts/SidePanelContext';
 
 // Make sure this token matches exactly what's expected by the API
 const AUTH_TOKEN = "XmVtXZLJbznJYVlpBQxgZ7X1SxYGqSyQfB2RJUJPeHOlejPOC5tG0MRK1FAK";
@@ -136,40 +137,42 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col relative terminal-effect">
-      <Globe />
-      <div className="flex-1 p-4 w-full relative z-10">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-xs">
-            {'>'} Workspace Command Center <span className="animate-blink">_</span>
-          </h1>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={refreshAllWorkspaces}
-            disabled={loading || Object.keys(workspaces).length === 0}
-            className="text-xs h-6"
-          >
-            <RotateCw className="mr-1 h-3 w-3" />
-            Refresh
-          </Button>
-        </div>
+    <SidePanelProvider>
+      <div className="min-h-screen flex flex-col relative terminal-effect">
+        <Globe />
+        <div className="flex-1 p-4 w-full relative z-10">
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-xs">
+              {'>'} Workspace Command Center <span className="animate-blink">_</span>
+            </h1>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={refreshAllWorkspaces}
+              disabled={loading || Object.keys(workspaces).length === 0}
+              className="text-xs h-6"
+            >
+              <RotateCw className="mr-1 h-3 w-3" />
+              Refresh
+            </Button>
+          </div>
 
-        <div className="mb-4">
-          <TerminalInput
-            label="> Enter Workspace ID"
-            value={workspaceId}
-            onChange={setWorkspaceId}
-            onSubmit={addWorkspace}
-          />
-        </div>
+          <div className="mb-4">
+            <TerminalInput
+              label="> Enter Workspace ID"
+              value={workspaceId}
+              onChange={setWorkspaceId}
+              onSubmit={addWorkspace}
+            />
+          </div>
 
-        <WorkspaceGrid workspaces={workspaces} />
+          <WorkspaceGrid workspaces={workspaces} />
+        </div>
+        
+        <LimitWarningFooter workspaces={workspaces} />
+        <RightSidebar />
       </div>
-      
-      <LimitWarningFooter workspaces={workspaces} />
-      <RightSidebar />
-    </div>
+    </SidePanelProvider>
   );
 };
 
