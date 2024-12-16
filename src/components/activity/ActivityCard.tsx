@@ -1,23 +1,23 @@
 import React from 'react';
-import { DollarSign, Car, Calendar } from 'lucide-react';
+import { DollarSign, Users, Database, Wifi, HardDrive } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ActivityCardProps {
-  status: 'Interested' | 'Abandoned' | 'Uninterested';
+  status: 'Warning' | 'Critical' | 'Normal';
   timeAgo: string;
   percentage: number;
-  type: 'Price Discussion' | 'Vehicle Features' | 'Test Drive';
+  type: 'Bot Usage' | 'Member Limit' | 'Storage Usage' | 'API Calls';
   userName: string;
 }
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'Interested':
+    case 'Normal':
       return 'bg-terminal-green text-black';
-    case 'Abandoned':
+    case 'Warning':
       return 'bg-yellow-600 text-black';
-    case 'Uninterested':
-      return 'bg-red-900 text-white';
+    case 'Critical':
+      return 'bg-red-500 text-white';
     default:
       return 'bg-gray-500';
   }
@@ -25,14 +25,16 @@ const getStatusColor = (status: string) => {
 
 const getIcon = (type: string) => {
   switch (type) {
-    case 'Price Discussion':
-      return <DollarSign className="w-4 h-4" />;
-    case 'Vehicle Features':
-      return <Car className="w-4 h-4" />;
-    case 'Test Drive':
-      return <Calendar className="w-4 h-4" />;
+    case 'Bot Usage':
+      return <Users className="w-4 h-4" />;
+    case 'Member Limit':
+      return <Database className="w-4 h-4" />;
+    case 'Storage Usage':
+      return <HardDrive className="w-4 h-4" />;
+    case 'API Calls':
+      return <Wifi className="w-4 h-4" />;
     default:
-      return null;
+      return <DollarSign className="w-4 h-4" />;
   }
 };
 
@@ -60,7 +62,10 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
       
       <div className="w-full bg-terminal-dim h-1.5 rounded-full mb-3">
         <div 
-          className="bg-terminal-green h-full rounded-full transition-all duration-300"
+          className={cn(
+            "h-full rounded-full transition-all duration-300",
+            percentage > 90 ? "bg-red-500" : percentage > 75 ? "bg-yellow-600" : "bg-terminal-green"
+          )}
           style={{ width: `${percentage}%` }}
         />
       </div>
