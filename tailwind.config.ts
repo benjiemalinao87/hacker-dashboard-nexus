@@ -43,6 +43,17 @@ export default {
       fontFamily: {
         mono: ["JetBrains Mono", "monospace"],
       },
+      backgroundColor: {
+        dashboard: {
+          base: "#0A1929",
+          card: "rgba(59, 130, 246, 0.1)",
+        },
+      },
+      borderColor: {
+        dashboard: {
+          card: "rgba(59, 130, 246, 0.2)",
+        },
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
