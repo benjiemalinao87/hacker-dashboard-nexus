@@ -9,50 +9,47 @@ interface LimitWarningFooterProps {
 interface ChartData {
   name: string;
   percentage: number;
-  type: string;
+  resourceType: string;
 }
 
 export const LimitWarningFooter: React.FC<LimitWarningFooterProps> = ({ workspaces }) => {
   const chartData = useMemo(() => {
     console.log('LimitWarningFooter: Received workspaces data:', workspaces);
-    const data: ChartData[] = [];
+    const workspaceMaxUsage: Record<string, ChartData> = {};
     
     Object.entries(workspaces).forEach(([id, workspace]) => {
-      const botUserPercentage = (workspace.bot_user_used / workspace.bot_user_limit) * 100;
-      const memberPercentage = (workspace.member_used / workspace.member_limit) * 100;
-      const botPercentage = (workspace.bot_used / workspace.bot_limit) * 100;
+      const usageData = [
+        {
+          type: 'Bot Users',
+          percentage: (workspace.bot_user_used / workspace.bot_user_limit) * 100
+        },
+        {
+          type: 'Members',
+          percentage: (workspace.member_used / workspace.member_limit) * 100
+        },
+        {
+          type: 'Bots',
+          percentage: (workspace.bot_used / workspace.bot_limit) * 100
+        }
+      ];
       
-      console.log(`Workspace ${workspace.name} (${id}) usage percentages:`, {
-        botUserPercentage,
-        memberPercentage,
-        botPercentage
-      });
+      console.log(`Workspace ${workspace.name} (${id}) usage percentages:`, usageData);
       
-      if (botUserPercentage > 80) {
-        data.push({
+      // Find the highest usage percentage for this workspace
+      const maxUsage = usageData.reduce((max, current) => {
+        return current.percentage > max.percentage ? current : max;
+      }, usageData[0]);
+      
+      if (maxUsage.percentage > 80) {
+        workspaceMaxUsage[workspace.name] = {
           name: workspace.name,
-          percentage: Math.round(botUserPercentage),
-          type: 'Bot Users'
-        });
-      }
-      
-      if (memberPercentage > 80) {
-        data.push({
-          name: workspace.name,
-          percentage: Math.round(memberPercentage),
-          type: 'Members'
-        });
-      }
-      
-      if (botPercentage > 80) {
-        data.push({
-          name: workspace.name,
-          percentage: Math.round(botPercentage),
-          type: 'Bots'
-        });
+          percentage: Math.round(maxUsage.percentage),
+          resourceType: maxUsage.type
+        };
       }
     });
     
+    const data = Object.values(workspaceMaxUsage);
     console.log('LimitWarningFooter: Final chart data:', data);
     return data;
   }, [workspaces]);
@@ -97,7 +94,10 @@ export const LimitWarningFooter: React.FC<LimitWarningFooterProps> = ({ workspac
                 borderRadius: '4px',
                 color: '#00ff00'
               }}
-              formatter={(value: number) => [`${value}%`, 'Usage']}
+              formatter={(value: number, name: string, props: { payload: ChartData }) => [
+                `${value}% (${props.payload.resourceType})`,
+                'Usage'
+              ]}
             />
             <Bar 
               dataKey="percentage" 
