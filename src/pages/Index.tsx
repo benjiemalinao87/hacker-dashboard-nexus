@@ -77,6 +77,8 @@ const Index = () => {
     setLoading(true);
     try {
       const workspaceIds = Object.keys(workspaces);
+      console.log('Refreshing workspaces:', workspaceIds);
+      
       const updatedWorkspaces: Record<string, WorkspaceData> = {};
       
       await Promise.all(
@@ -91,6 +93,7 @@ const Index = () => {
         })
       );
       
+      console.log('Updated workspaces data:', updatedWorkspaces);
       setWorkspaces(updatedWorkspaces);
       toast.success('Workspaces refreshed successfully');
     } catch (error) {
@@ -113,10 +116,15 @@ const Index = () => {
     
     try {
       const data = await fetchWithRetry(id);
-      setWorkspaces(prev => ({
-        ...prev,
-        [id]: data
-      }));
+      console.log('Successfully fetched workspace data:', data);
+      setWorkspaces(prev => {
+        const updated = {
+          ...prev,
+          [id]: data
+        };
+        console.log('Updated workspaces state:', updated);
+        return updated;
+      });
       setWorkspaceId('');
       toast.success('Workspace added successfully');
     } catch (error) {
