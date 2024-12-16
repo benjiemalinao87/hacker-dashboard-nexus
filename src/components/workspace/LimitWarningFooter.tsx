@@ -55,7 +55,7 @@ export const LimitWarningFooter: React.FC<LimitWarningFooterProps> = ({ workspac
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-sm border-t border-terminal-green/20 p-4 z-40">
-      <h3 className="text-xs mb-2 text-terminal-green/60">Resource Usage Warnings (>80%)</h3>
+      <h3 className="text-xs mb-2 text-terminal-green/60">Resource Usage Warnings ({'>'}80%)</h3>
       <div className="h-32">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>

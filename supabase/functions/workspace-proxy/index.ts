@@ -26,9 +26,10 @@ serve(async (req) => {
     const response = await fetch(
       `https://www.uchat.com.au/api/partner/workspace/${workspaceId}`,
       {
+        method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
-          'accept': 'application/json',
+          'Accept': 'application/json',
           'Content-Type': 'application/json'
         }
       }
@@ -44,13 +45,24 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify(data),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { 
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json' 
+        } 
+      }
     )
   } catch (error) {
     console.error('Error in workspace-proxy:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      { 
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json' 
+        }, 
+        status: 500 
+      }
     )
   }
 })
