@@ -50,6 +50,21 @@ serve(async (req) => {
     console.log('API Response headers:', Object.fromEntries(response.headers))
     console.log('API Response body:', responseText)
 
+    // Handle specific HTTP status codes
+    if (response.status === 404) {
+      console.error(`Workspace ${workspaceId} not found`)
+      return new Response(
+        JSON.stringify({ 
+          error: 'Workspace not found',
+          details: responseText
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 404 
+        }
+      )
+    }
+
     if (!response.ok) {
       if (response.status === 401) {
         console.error('Authentication failed with uchat.com.au API. Full response:', responseText)
