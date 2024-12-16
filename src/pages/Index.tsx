@@ -4,6 +4,7 @@ import { ProgressBar } from '../components/ProgressBar';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { format, parseISO } from 'date-fns';
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
 const AUTH_TOKEN = "XmVtXZLJbznJYVlpBQxgZ7X1SxYGqSyQfB2RJUJPeHOlejPOC5tG0MRK1FAK";
 
@@ -31,6 +32,37 @@ const formatDate = (dateString: string) => {
   }
 };
 
+const COLORS = ['#9b87f5', '#7E69AB'];
+
+const UsagePieChart = ({ used, total }: { used: number; total: number }) => {
+  const data = [
+    { name: 'Used', value: used },
+    { name: 'Available', value: total - used }
+  ];
+
+  return (
+    <div className="h-8 w-8">
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            innerRadius={8}
+            outerRadius={16}
+            paddingAngle={2}
+            dataKey="value"
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index]} />
+            ))}
+          </Pie>
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
+
 const WorkspaceCard = ({ data }: { data: WorkspaceData }) => (
   <div className="border border-terminal-green p-1.5 text-[10px]">
     <div className="flex justify-between items-start">
@@ -39,34 +71,43 @@ const WorkspaceCard = ({ data }: { data: WorkspaceData }) => (
     </div>
     
     <div className="space-y-0.5 mt-0.5">
-      <div>
-        <div className="flex justify-between text-[9px]">
-          <span>{`> Bot Users`}</span>
-          <span className={data.bot_user_used >= data.bot_user_limit * 0.9 ? 'text-terminal-magenta' : ''}>
-            {data.bot_user_used}/{data.bot_user_limit}
-          </span>
+      <div className="flex items-center gap-1">
+        <UsagePieChart used={data.bot_user_used} total={data.bot_user_limit} />
+        <div className="flex-1">
+          <div className="flex justify-between text-[9px]">
+            <span>{`> Bot Users`}</span>
+            <span className={data.bot_user_used >= data.bot_user_limit * 0.9 ? 'text-terminal-magenta' : ''}>
+              {data.bot_user_used}/{data.bot_user_limit}
+            </span>
+          </div>
+          <ProgressBar used={data.bot_user_used} total={data.bot_user_limit} />
         </div>
-        <ProgressBar used={data.bot_user_used} total={data.bot_user_limit} />
       </div>
 
-      <div>
-        <div className="flex justify-between text-[9px]">
-          <span>{`> Bots`}</span>
-          <span className={data.bot_used >= data.bot_limit * 0.9 ? 'text-terminal-magenta' : ''}>
-            {data.bot_used}/{data.bot_limit}
-          </span>
+      <div className="flex items-center gap-1">
+        <UsagePieChart used={data.bot_used} total={data.bot_limit} />
+        <div className="flex-1">
+          <div className="flex justify-between text-[9px]">
+            <span>{`> Bots`}</span>
+            <span className={data.bot_used >= data.bot_limit * 0.9 ? 'text-terminal-magenta' : ''}>
+              {data.bot_used}/{data.bot_limit}
+            </span>
+          </div>
+          <ProgressBar used={data.bot_used} total={data.bot_limit} />
         </div>
-        <ProgressBar used={data.bot_used} total={data.bot_limit} />
       </div>
 
-      <div>
-        <div className="flex justify-between text-[9px]">
-          <span>{`> Members`}</span>
-          <span className={data.member_used >= data.member_limit * 0.9 ? 'text-terminal-magenta' : ''}>
-            {data.member_used}/{data.member_limit}
-          </span>
+      <div className="flex items-center gap-1">
+        <UsagePieChart used={data.member_used} total={data.member_limit} />
+        <div className="flex-1">
+          <div className="flex justify-between text-[9px]">
+            <span>{`> Members`}</span>
+            <span className={data.member_used >= data.member_limit * 0.9 ? 'text-terminal-magenta' : ''}>
+              {data.member_used}/{data.member_limit}
+            </span>
+          </div>
+          <ProgressBar used={data.member_used} total={data.member_limit} />
         </div>
-        <ProgressBar used={data.member_used} total={data.member_limit} />
       </div>
     </div>
 
