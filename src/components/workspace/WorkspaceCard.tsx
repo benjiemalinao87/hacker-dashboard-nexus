@@ -33,7 +33,7 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
     const isCritical = percentage >= 90;
 
     return (
-      <div className="flex flex-col space-y-1.5">
+      <div className="flex flex-col space-y-1.5 w-full">
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-terminal-green" />
@@ -46,16 +46,17 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
             {used}/{total}
           </span>
         </div>
-        <div className="w-full overflow-hidden">
-          <div className="relative h-1 bg-terminal-dim rounded-full">
-            <div 
-              className={cn(
-                "absolute top-0 left-0 h-full rounded-full transition-all duration-300",
-                isCritical ? "bg-terminal-magenta" : "bg-terminal-green"
-              )}
-              style={{ width: `${percentage}%` }}
-            />
-          </div>
+        <div className="w-full h-1 bg-terminal-dim rounded-full overflow-hidden">
+          <div 
+            className={cn(
+              "h-full rounded-full transition-all duration-300",
+              isCritical ? "bg-terminal-magenta" : "bg-terminal-green"
+            )}
+            style={{ 
+              width: `${Math.min(percentage, 100)}%`,
+              transform: 'translateX(0)'
+            }}
+          />
         </div>
       </div>
     );
@@ -80,7 +81,7 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
         </div>
 
         <div className="flex gap-8">
-          <div className="w-28 h-28 animate-[spin_10s_linear_infinite] flex-shrink-0">
+          <div className="w-28 h-28 flex-shrink-0">
             <PieChart width={112} height={112}>
               <Pie
                 data={pieData}
@@ -101,7 +102,7 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
             </PieChart>
           </div>
           
-          <div className="flex-1 space-y-6">
+          <div className="flex-1 space-y-6 min-w-0">
             <UsageBar 
               used={data.bot_user_used}
               total={data.bot_user_limit}
