@@ -32,7 +32,6 @@ serve(async (req) => {
     }
 
     console.log(`Making request for workspace: ${workspaceId}`)
-    console.log(`Using token starting with: ${token.substring(0, 10)}...`)
     
     const apiUrl = `https://www.uchat.com.au/api/partner/workspace/${workspaceId}`
     console.log('Requesting URL:', apiUrl)
@@ -52,6 +51,18 @@ serve(async (req) => {
     console.log('API Response body:', responseText)
 
     if (!response.ok) {
+      if (response.status === 401) {
+        return new Response(
+          JSON.stringify({ 
+            error: 'Authentication failed. Please check your token.',
+            details: responseText
+          }),
+          { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 401 
+          }
+        )
+      }
       throw new Error(`API request failed with status ${response.status}: ${responseText}`)
     }
 

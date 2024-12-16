@@ -33,6 +33,10 @@ const Index = () => {
       
       if (error) {
         console.error('Supabase function error:', error);
+        if (error.message.includes('Authentication failed')) {
+          toast.error('Authentication failed. Please check your token.');
+          throw new Error('Authentication failed');
+        }
         throw error;
       }
       
