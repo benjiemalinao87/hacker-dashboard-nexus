@@ -89,7 +89,10 @@ const Index = () => {
 
   return (
     <div className="min-h-screen p-2 relative terminal-effect">
-      <div className="matrix-rain" />
+      <div className="matrix-rain">
+        <div>11</div>
+        <div>00</div>
+      </div>
       <div className="max-w-5xl mx-auto relative z-10">
         <div className="mb-2">
           <TerminalInput

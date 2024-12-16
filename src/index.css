@@ -38,46 +38,52 @@ body {
   z-index: 0;
 }
 
-.matrix-rain::before {
+.matrix-rain::before,
+.matrix-rain::after,
+.matrix-rain div {
   content: "01";
   position: absolute;
-  top: -50%;
-  left: 50%;
-  font-size: 24px;
+  color: theme('colors.terminal.green');
   text-shadow: 0 0 5px theme('colors.terminal.green');
-  animation: matrix-rain 8s linear infinite;
+  animation: matrix-rain linear infinite;
 }
 
-@keyframes matrix-rain {
-  0% {
-    transform: translateY(-50%) rotate(0deg);
-  }
-  100% {
-    transform: translateY(150vh) rotate(360deg);
-  }
+.matrix-rain::before {
+  content: "01";
+  left: 50%;
+  font-size: 24px;
+  animation-duration: 8s;
 }
 
 .matrix-rain::after {
   content: "10";
-  position: absolute;
-  top: -50%;
   left: 25%;
   font-size: 18px;
-  text-shadow: 0 0 5px theme('colors.terminal.green');
-  animation: matrix-rain 6s linear infinite;
+  animation-duration: 6s;
   animation-delay: -2s;
 }
 
-.progress-bar {
-  background: theme('colors.terminal.dim');
-  border: 1px solid theme('colors.terminal.green');
-  height: 20px;
-  position: relative;
-  overflow: hidden;
+.matrix-rain div:nth-child(1) {
+  content: "11";
+  left: 75%;
+  font-size: 16px;
+  animation-duration: 7s;
+  animation-delay: -4s;
 }
 
-.progress-bar-fill {
-  background: theme('colors.terminal.green');
-  height: 100%;
-  transition: width 0.3s ease;
+.matrix-rain div:nth-child(2) {
+  content: "00";
+  left: 15%;
+  font-size: 20px;
+  animation-duration: 9s;
+  animation-delay: -1s;
+}
+
+@keyframes matrix-rain {
+  0% {
+    transform: translateY(-50vh) rotate(0deg);
+  }
+  100% {
+    transform: translateY(150vh) rotate(360deg);
+  }
 }

@@ -2,6 +2,7 @@ import React from 'react';
 import { format, parseISO } from 'date-fns';
 import { ProgressBar } from '../ProgressBar';
 import { UsagePieChart } from './UsagePieChart';
+import { UsageBarChart } from './UsageBarChart';
 import { WorkspaceData } from './types';
 
 const formatDate = (dateString: string) => {
@@ -31,7 +32,7 @@ export const WorkspaceCard = ({ data }: { data: WorkspaceData }) => (
               {data.bot_user_used}/{data.bot_user_limit}
             </span>
           </div>
-          <ProgressBar used={data.bot_user_used} total={data.bot_user_limit} />
+          <UsageBarChart used={data.bot_user_used} total={data.bot_user_limit} />
         </div>
       </div>
 
@@ -44,7 +45,7 @@ export const WorkspaceCard = ({ data }: { data: WorkspaceData }) => (
               {data.bot_used}/{data.bot_limit}
             </span>
           </div>
-          <ProgressBar used={data.bot_used} total={data.bot_limit} />
+          <UsageBarChart used={data.bot_used} total={data.bot_limit} />
         </div>
       </div>
 
@@ -57,7 +58,7 @@ export const WorkspaceCard = ({ data }: { data: WorkspaceData }) => (
               {data.member_used}/{data.member_limit}
             </span>
           </div>
-          <ProgressBar used={data.member_used} total={data.member_limit} />
+          <UsageBarChart used={data.member_used} total={data.member_limit} />
         </div>
       </div>
     </div>
