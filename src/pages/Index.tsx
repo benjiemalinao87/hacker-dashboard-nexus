@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { TerminalInput } from '../components/TerminalInput';
 import { ProgressBar } from '../components/ProgressBar';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface WorkspaceData {
   name: string;
@@ -24,37 +25,20 @@ const Index = () => {
     setLoading(true);
     try {
       console.log('Fetching workspace data...');
-      const response = await fetch(
-        `https://www.uchat.com.au/api/partner/workspace/${workspaceId}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          mode: 'cors' // Explicitly set CORS mode
-        }
-      );
+      const { data: proxyData, error } = await supabase.functions.invoke('workspace-proxy', {
+        body: { workspaceId, token }
+      });
       
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (error) {
+        throw new Error(error.message);
       }
       
-      const jsonData = await response.json();
-      console.log('Received data:', jsonData);
-      setData(jsonData);
+      console.log('Received data:', proxyData);
+      setData(proxyData);
       toast.success('Data fetched successfully');
     } catch (error) {
       console.error('Error fetching data:', error);
-      let errorMessage = 'Failed to fetch workspace data';
-      
-      if (error instanceof Error) {
-        if (error.message.includes('CORS')) {
-          errorMessage = 'CORS error: Unable to access the API directly. Please ensure you have the correct permissions or try using a proxy server.';
-        }
-      }
-      
-      toast.error(errorMessage);
+      toast.error(error.message || 'Failed to fetch workspace data');
     } finally {
       setLoading(false);
     }
