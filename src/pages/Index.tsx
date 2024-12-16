@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TerminalInput } from '../components/TerminalInput';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -19,6 +19,31 @@ const Index = () => {
   const [workspaceId, setWorkspaceId] = useState('');
   const [loading, setLoading] = useState(false);
   const [workspaces, setWorkspaces] = useState<Record<string, WorkspaceData>>({});
+
+  // Fetch existing workspaces on component mount
+  useEffect(() => {
+    fetchWorkspaces();
+  }, []);
+
+  const fetchWorkspaces = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('workspaces')
+        .select('*');
+
+      if (error) throw error;
+
+      const workspacesMap: Record<string, WorkspaceData> = {};
+      data.forEach(workspace => {
+        workspacesMap[workspace.id] = workspace;
+      });
+
+      setWorkspaces(workspacesMap);
+    } catch (error) {
+      console.error('Error fetching workspaces:', error);
+      toast.error('Failed to fetch workspaces');
+    }
+  };
 
   const fetchWithRetry = async (id: string, retryCount = 0): Promise<WorkspaceData> => {
     try {
@@ -73,6 +98,28 @@ const Index = () => {
     }
   };
 
+  const deleteWorkspace = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('workspaces')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setWorkspaces(prev => {
+        const updated = { ...prev };
+        delete updated[id];
+        return updated;
+      });
+
+      toast.success('Workspace deleted successfully');
+    } catch (error) {
+      console.error('Error deleting workspace:', error);
+      toast.error('Failed to delete workspace');
+    }
+  };
+
   const refreshAllWorkspaces = async () => {
     setLoading(true);
     try {
@@ -116,6 +163,14 @@ const Index = () => {
     
     try {
       const data = await fetchWithRetry(id);
+      
+      // Save to Supabase
+      const { error } = await supabase
+        .from('workspaces')
+        .insert([{ id, ...data }]);
+
+      if (error) throw error;
+
       console.log('Successfully fetched workspace data:', data);
       setWorkspaces(prev => {
         const updated = {
@@ -165,7 +220,7 @@ const Index = () => {
             />
           </div>
 
-          <WorkspaceGrid workspaces={workspaces} />
+          <WorkspaceGrid workspaces={workspaces} onDelete={deleteWorkspace} />
         </div>
         
         <LimitWarningFooter workspaces={workspaces} />

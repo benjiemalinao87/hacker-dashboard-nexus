@@ -4,13 +4,19 @@ import { WorkspaceData } from '@/types/workspace';
 
 interface WorkspaceGridProps {
   workspaces: Record<string, WorkspaceData>;
+  onDelete: (id: string) => void;
 }
 
-export const WorkspaceGrid: React.FC<WorkspaceGridProps> = ({ workspaces }) => {
+export const WorkspaceGrid: React.FC<WorkspaceGridProps> = ({ workspaces, onDelete }) => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1.5">
       {Object.entries(workspaces).map(([id, data]) => (
-        <WorkspaceCard key={id} data={data} />
+        <WorkspaceCard 
+          key={id} 
+          id={id}
+          data={data} 
+          onDelete={() => onDelete(id)}
+        />
       ))}
     </div>
   );

@@ -1,75 +1,54 @@
 import React from 'react';
-import { UsagePieChart } from './UsagePieChart';
-import { ProgressBar } from '../ProgressBar';
+import { Card, CardContent } from '@/components/ui/card';
 import { WorkspaceData } from '@/types/workspace';
-import { format, parseISO } from 'date-fns';
-
-const formatDate = (dateString: string) => {
-  try {
-    const date = parseISO(dateString);
-    return format(date, 'MM/dd/yy');
-  } catch (error) {
-    console.error('Error formatting date:', dateString, error);
-    return 'Invalid date';
-  }
-};
+import { UsagePieChart } from './UsagePieChart';
+import { Button } from '../ui/button';
+import { Trash2 } from 'lucide-react';
 
 interface WorkspaceCardProps {
+  id: string;
   data: WorkspaceData;
+  onDelete: () => void;
 }
 
-export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ data }) => {
+export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete }) => {
+  const botUsagePercentage = (data.bot_user_used / data.bot_user_limit) * 100;
+  const memberUsagePercentage = (data.member_used / data.member_limit) * 100;
+
   return (
-    <div className="border border-terminal-green p-1.5 text-[10px]">
-      <div className="flex justify-between items-start">
-        <h2 className="font-bold text-[11px]">{`> ${data.name}`}</h2>
-        <span className="text-[9px] text-terminal-dim">{`${data.timezone} | ${data.plan}`}</span>
-      </div>
-      
-      <div className="space-y-0.5 mt-0.5">
-        <div className="flex items-center gap-1">
-          <UsagePieChart used={data.bot_user_used} total={data.bot_user_limit} />
-          <div className="flex-1">
-            <div className="flex justify-between text-[9px]">
-              <span>{`> Bot Users`}</span>
-              <span className={data.bot_user_used >= data.bot_user_limit * 0.9 ? 'text-terminal-magenta' : ''}>
-                {data.bot_user_used}/{data.bot_user_limit}
-              </span>
-            </div>
-            <ProgressBar used={data.bot_user_used} total={data.bot_user_limit} />
+    <Card className="bg-black/40 backdrop-blur-sm border-terminal-green/20 hover:bg-black/60 transition-all duration-300">
+      <CardContent className="p-4">
+        <div className="flex justify-between items-start mb-2">
+          <div>
+            <h3 className="text-terminal-green text-sm font-mono truncate">{data.name}</h3>
+            <p className="text-terminal-green/60 text-xs">{data.plan}</p>
           </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-terminal-green/60 hover:text-red-500 hover:bg-red-500/20"
+            onClick={onDelete}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
         </div>
-
-        <div className="flex items-center gap-1">
-          <UsagePieChart used={data.bot_used} total={data.bot_limit} />
-          <div className="flex-1">
-            <div className="flex justify-between text-[9px]">
-              <span>{`> Bots`}</span>
-              <span className={data.bot_used >= data.bot_limit * 0.9 ? 'text-terminal-magenta' : ''}>
-                {data.bot_used}/{data.bot_limit}
-              </span>
-            </div>
-            <ProgressBar used={data.bot_used} total={data.bot_limit} />
-          </div>
+        
+        <div className="space-y-4">
+          <UsagePieChart
+            percentage={botUsagePercentage}
+            label="Bot Usage"
+            warning={botUsagePercentage > 75}
+            critical={botUsagePercentage > 90}
+          />
+          
+          <UsagePieChart
+            percentage={memberUsagePercentage}
+            label="Member Usage"
+            warning={memberUsagePercentage > 75}
+            critical={memberUsagePercentage > 90}
+          />
         </div>
-
-        <div className="flex items-center gap-1">
-          <UsagePieChart used={data.member_used} total={data.member_limit} />
-          <div className="flex-1">
-            <div className="flex justify-between text-[9px]">
-              <span>{`> Members`}</span>
-              <span className={data.member_used >= data.member_limit * 0.9 ? 'text-terminal-magenta' : ''}>
-                {data.member_used}/{data.member_limit}
-              </span>
-            </div>
-            <ProgressBar used={data.member_used} total={data.member_limit} />
-          </div>
-        </div>
-      </div>
-
-      <div className="text-[8px] text-terminal-dim mt-0.5">
-        <span>{`> ${formatDate(data.billing_start_at)} - ${formatDate(data.billing_end_at)}`}</span>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
