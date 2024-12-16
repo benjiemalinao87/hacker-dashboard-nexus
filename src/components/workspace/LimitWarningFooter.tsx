@@ -14,6 +14,7 @@ interface ChartData {
 
 export const LimitWarningFooter: React.FC<LimitWarningFooterProps> = ({ workspaces }) => {
   const chartData = useMemo(() => {
+    console.log('Calculating chart data from workspaces:', workspaces);
     const data: ChartData[] = [];
     
     Object.entries(workspaces).forEach(([_, workspace]) => {
@@ -21,10 +22,16 @@ export const LimitWarningFooter: React.FC<LimitWarningFooterProps> = ({ workspac
       const memberPercentage = (workspace.member_used / workspace.member_limit) * 100;
       const botPercentage = (workspace.bot_used / workspace.bot_limit) * 100;
       
+      console.log(`Workspace ${workspace.name} percentages:`, {
+        botUserPercentage,
+        memberPercentage,
+        botPercentage
+      });
+      
       if (botUserPercentage > 80) {
         data.push({
           name: workspace.name,
-          percentage: botUserPercentage,
+          percentage: Math.round(botUserPercentage),
           type: 'Bot Users'
         });
       }
@@ -32,7 +39,7 @@ export const LimitWarningFooter: React.FC<LimitWarningFooterProps> = ({ workspac
       if (memberPercentage > 80) {
         data.push({
           name: workspace.name,
-          percentage: memberPercentage,
+          percentage: Math.round(memberPercentage),
           type: 'Members'
         });
       }
@@ -40,16 +47,18 @@ export const LimitWarningFooter: React.FC<LimitWarningFooterProps> = ({ workspac
       if (botPercentage > 80) {
         data.push({
           name: workspace.name,
-          percentage: botPercentage,
+          percentage: Math.round(botPercentage),
           type: 'Bots'
         });
       }
     });
     
+    console.log('Final chart data:', data);
     return data;
   }, [workspaces]);
 
   if (chartData.length === 0) {
+    console.log('No chart data available, returning null');
     return null;
   }
 
@@ -58,17 +67,27 @@ export const LimitWarningFooter: React.FC<LimitWarningFooterProps> = ({ workspac
       <h3 className="text-xs mb-2 text-terminal-green/60">Resource Usage Warnings ({'>'}80%)</h3>
       <div className="h-32">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <BarChart 
+            data={chartData} 
+            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+          >
             <XAxis 
               dataKey="name" 
               tick={{ fill: '#00ff00', fontSize: 10 }}
               interval={0}
               angle={-45}
               textAnchor="end"
+              height={60}
             />
             <YAxis 
               tick={{ fill: '#00ff00', fontSize: 10 }}
               domain={[0, 100]}
+              label={{ 
+                value: 'Usage %', 
+                angle: -90, 
+                position: 'insideLeft',
+                style: { fill: '#00ff00' }
+              }}
             />
             <Tooltip
               contentStyle={{
@@ -77,6 +96,7 @@ export const LimitWarningFooter: React.FC<LimitWarningFooterProps> = ({ workspac
                 borderRadius: '4px',
                 color: '#00ff00'
               }}
+              formatter={(value: number) => [`${value}%`, 'Usage']}
             />
             <Bar 
               dataKey="percentage" 
