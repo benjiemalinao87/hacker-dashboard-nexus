@@ -16,7 +16,7 @@ export const TerminalInput: React.FC<TerminalInputProps> = ({
   return (
     <div className="mb-4">
       <label className="block mb-2">
-        <span className="text-terminal-green">> {label}:</span>
+        <span className="text-terminal-green">{'>'} {label}:</span>
         <span className="animate-blink ml-1">_</span>
       </label>
       <input

@@ -78,8 +78,8 @@ const Index = () => {
 
         {data && (
           <div className="border border-terminal-green p-4">
-            <h2 className="text-xl mb-4">> Workspace: {data.name}</h2>
-            <p className="mb-4">> Plan: {data.plan}</p>
+            <h2 className="text-xl mb-4">{'>'} Workspace: {data.name}</h2>
+            <p className="mb-4">{'>'} Plan: {data.plan}</p>
             
             <ProgressBar
               label="Bot Users"

@@ -13,7 +13,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ used, total, label }) 
   return (
     <div className="mb-4">
       <div className="flex justify-between mb-1">
-        <span>> {label}:</span>
+        <span>{'>'} {label}:</span>
         <span className={isOverLimit ? 'text-terminal-magenta' : ''}>
           {used} / {total}
         </span>
