@@ -11,7 +11,7 @@ import { RightSidebar } from '@/components/activity/RightSidebar';
 import { LimitWarningFooter } from '@/components/workspace/LimitWarningFooter';
 
 // Make sure this token matches exactly what's expected by the API
-const AUTH_TOKEN = "XmVtXZLJbznJYVlpBQxgZ7X1SxYGqSyQfB2RJUJPeHOC5tG0MRK1FAK";
+const AUTH_TOKEN = "XmVtXZLJbznJYVlpBQxgZ7X1SxYGqSyQfB2RJUJPeHOlejPOC5tG0MRK1FAK";
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000; // 1 second
 
