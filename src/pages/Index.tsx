@@ -3,7 +3,6 @@ import { TerminalInput } from '../components/TerminalInput';
 import { WorkspaceGrid } from '@/components/workspace/WorkspaceGrid';
 import Globe from '@/components/Globe';
 import { RightSidebar } from '@/components/activity/RightSidebar';
-import { LimitWarningFooter } from '@/components/workspace/LimitWarningFooter';
 import { SidePanelProvider } from '@/contexts/SidePanelContext';
 import { WorkspaceHeader } from '@/components/workspace/WorkspaceHeader';
 import { useWorkspaces } from '@/hooks/useWorkspaces';
@@ -53,7 +52,6 @@ const Index = () => {
           <WorkspaceGrid workspaces={workspaces} onDelete={deleteWorkspace} />
         </div>
         
-        <LimitWarningFooter workspaces={workspaces} />
         <RightSidebar workspaces={workspaces} />
       </div>
     </SidePanelProvider>
