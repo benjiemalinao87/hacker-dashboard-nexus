@@ -23,6 +23,22 @@ const Globe = () => {
     const centerY = canvas.height / 2;
     const radius = Math.min(canvas.width, canvas.height) * 0.2;
     
+    // Map coordinates (simplified world map points)
+    const mapPoints = [
+      // North America
+      [[0.2, 0.2], [0.4, 0.2], [0.4, 0.4], [0.2, 0.4]],
+      // South America
+      [[0.3, 0.5], [0.4, 0.5], [0.4, 0.7], [0.3, 0.7]],
+      // Europe
+      [[0.5, 0.2], [0.6, 0.2], [0.6, 0.3], [0.5, 0.3]],
+      // Africa
+      [[0.5, 0.4], [0.6, 0.4], [0.6, 0.6], [0.5, 0.6]],
+      // Asia
+      [[0.7, 0.2], [0.9, 0.2], [0.9, 0.5], [0.7, 0.5]],
+      // Australia
+      [[0.8, 0.6], [0.9, 0.6], [0.9, 0.7], [0.8, 0.7]],
+    ];
+
     // Packet system
     type Packet = {
       startX: number;
@@ -36,8 +52,16 @@ const Globe = () => {
     const packets: Packet[] = [];
     
     const createPacket = () => {
-      const angle1 = Math.random() * Math.PI * 2;
-      const angle2 = Math.random() * Math.PI * 2;
+      // Select random continents for start and end points
+      const continent1 = mapPoints[Math.floor(Math.random() * mapPoints.length)];
+      const continent2 = mapPoints[Math.floor(Math.random() * mapPoints.length)];
+      
+      // Get random points within the continents
+      const point1 = continent1[Math.floor(Math.random() * continent1.length)];
+      const point2 = continent2[Math.floor(Math.random() * continent2.length)];
+      
+      const angle1 = point1[0] * Math.PI * 2;
+      const angle2 = point2[0] * Math.PI * 2;
       
       packets.push({
         startX: centerX + Math.cos(angle1) * radius,
@@ -49,15 +73,38 @@ const Globe = () => {
       });
     };
 
+    const drawContinents = () => {
+      mapPoints.forEach(continent => {
+        ctx.beginPath();
+        continent.forEach((point, index) => {
+          const x = centerX + (point[0] - 0.5) * radius * 2;
+          const y = centerY + (point[1] - 0.5) * radius;
+          if (index === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        });
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(0, 255, 0, 0.1)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(0, 255, 0, 0.3)';
+        ctx.stroke();
+      });
+    };
+
     // Animation loop
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw globe
+      // Draw base globe
       ctx.beginPath();
       ctx.ellipse(centerX, centerY, radius, radius * 0.5, 0, 0, Math.PI * 2);
       ctx.strokeStyle = 'rgba(0, 255, 0, 0.2)';
       ctx.stroke();
+
+      // Draw continents
+      drawContinents();
 
       // Draw latitude lines
       for (let i = 1; i < 5; i++) {
