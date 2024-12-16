@@ -2,6 +2,7 @@ import React from 'react';
 import { ActivityCard } from './ActivityCard';
 import { Pin, PinOff } from 'lucide-react';
 import { useSidePanel } from '@/contexts/SidePanelContext';
+import { cn } from '@/lib/utils';
 
 const mockActivities = [
   {
