@@ -1,126 +1,47 @@
 import React, { useState } from 'react';
 import { TerminalInput } from '../components/TerminalInput';
-import { ProgressBar } from '../components/ProgressBar';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { format, parseISO } from 'date-fns';
-import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { WorkspaceGrid } from '@/components/workspace/WorkspaceGrid';
+import { WorkspaceData } from '@/components/workspace/types';
 
 const AUTH_TOKEN = "XmVtXZLJbznJYVlpBQxgZ7X1SxYGqSyQfB2RJUJPeHOlejPOC5tG0MRK1FAK";
-
-interface WorkspaceData {
-  name: string;
-  timezone: string;
-  plan: string;
-  bot_user_used: number;
-  bot_user_limit: number;
-  bot_used: number;
-  bot_limit: number;
-  member_used: number;
-  member_limit: number;
-  billing_start_at: string;
-  billing_end_at: string;
-}
-
-const formatDate = (dateString: string) => {
-  try {
-    const date = parseISO(dateString);
-    return format(date, 'MM/dd/yy');
-  } catch (error) {
-    console.error('Error formatting date:', dateString, error);
-    return 'Invalid date';
-  }
-};
-
-const COLORS = ['#9b87f5', '#7E69AB'];
-
-const UsagePieChart = ({ used, total }: { used: number; total: number }) => {
-  const data = [
-    { name: 'Used', value: used },
-    { name: 'Available', value: total - used }
-  ];
-
-  return (
-    <div className="h-8 w-8">
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
-          <Pie
-            data={data}
-            cx="50%"
-            cy="50%"
-            innerRadius={8}
-            outerRadius={16}
-            paddingAngle={2}
-            dataKey="value"
-          >
-            {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index]} />
-            ))}
-          </Pie>
-        </PieChart>
-      </ResponsiveContainer>
-    </div>
-  );
-};
-
-const WorkspaceCard = ({ data }: { data: WorkspaceData }) => (
-  <div className="border border-terminal-green p-1.5 text-[10px]">
-    <div className="flex justify-between items-start">
-      <h2 className="font-bold text-[11px]">{`> ${data.name}`}</h2>
-      <span className="text-[9px] text-terminal-dim">{`${data.timezone} | ${data.plan}`}</span>
-    </div>
-    
-    <div className="space-y-0.5 mt-0.5">
-      <div className="flex items-center gap-1">
-        <UsagePieChart used={data.bot_user_used} total={data.bot_user_limit} />
-        <div className="flex-1">
-          <div className="flex justify-between text-[9px]">
-            <span>{`> Bot Users`}</span>
-            <span className={data.bot_user_used >= data.bot_user_limit * 0.9 ? 'text-terminal-magenta' : ''}>
-              {data.bot_user_used}/{data.bot_user_limit}
-            </span>
-          </div>
-          <ProgressBar used={data.bot_user_used} total={data.bot_user_limit} />
-        </div>
-      </div>
-
-      <div className="flex items-center gap-1">
-        <UsagePieChart used={data.bot_used} total={data.bot_limit} />
-        <div className="flex-1">
-          <div className="flex justify-between text-[9px]">
-            <span>{`> Bots`}</span>
-            <span className={data.bot_used >= data.bot_limit * 0.9 ? 'text-terminal-magenta' : ''}>
-              {data.bot_used}/{data.bot_limit}
-            </span>
-          </div>
-          <ProgressBar used={data.bot_used} total={data.bot_limit} />
-        </div>
-      </div>
-
-      <div className="flex items-center gap-1">
-        <UsagePieChart used={data.member_used} total={data.member_limit} />
-        <div className="flex-1">
-          <div className="flex justify-between text-[9px]">
-            <span>{`> Members`}</span>
-            <span className={data.member_used >= data.member_limit * 0.9 ? 'text-terminal-magenta' : ''}>
-              {data.member_used}/{data.member_limit}
-            </span>
-          </div>
-          <ProgressBar used={data.member_used} total={data.member_limit} />
-        </div>
-      </div>
-    </div>
-
-    <div className="text-[8px] text-terminal-dim mt-0.5">
-      <span>{`> ${formatDate(data.billing_start_at)} - ${formatDate(data.billing_end_at)}`}</span>
-    </div>
-  </div>
-);
 
 const Index = () => {
   const [workspaceId, setWorkspaceId] = useState('');
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [workspaces, setWorkspaces] = useState<Record<string, WorkspaceData>>({});
+
+  const fetchWorkspaceData = async (id: string) => {
+    console.log('Fetching workspace data...', id);
+    const { data: response, error } = await supabase.functions.invoke('workspace-proxy', {
+      body: { workspaceId: id, token: AUTH_TOKEN }
+    });
+    
+    if (error) {
+      throw new Error(error.message);
+    }
+    
+    console.log('Received data:', response);
+    
+    if (response.data) {
+      return {
+        name: response.data.name,
+        timezone: response.data.timezone || 'UTC',
+        plan: response.data.plan,
+        bot_user_used: response.data.bot_user_used,
+        bot_user_limit: response.data.bot_user_limit,
+        bot_used: response.data.bot_used,
+        bot_limit: response.data.bot_limit,
+        member_used: response.data.member_used,
+        member_limit: response.data.member_limit,
+        billing_start_at: response.data.billing_start_at,
+        billing_end_at: response.data.billing_end_at
+      };
+    }
+    throw new Error('Invalid response format');
+  };
 
   const fetchData = async () => {
     if (!workspaceId) {
@@ -130,39 +51,13 @@ const Index = () => {
 
     setLoading(true);
     try {
-      console.log('Fetching workspace data...');
-      const { data: response, error } = await supabase.functions.invoke('workspace-proxy', {
-        body: { workspaceId, token: AUTH_TOKEN }
-      });
-      
-      if (error) {
-        throw new Error(error.message);
-      }
-      
-      console.log('Received data:', response);
-      
-      if (response.data) {
-        setWorkspaces(prev => ({
-          ...prev,
-          [workspaceId]: {
-            name: response.data.name,
-            timezone: response.data.timezone || 'UTC',
-            plan: response.data.plan,
-            bot_user_used: response.data.bot_user_used,
-            bot_user_limit: response.data.bot_user_limit,
-            bot_used: response.data.bot_used,
-            bot_limit: response.data.bot_limit,
-            member_used: response.data.member_used,
-            member_limit: response.data.member_limit,
-            billing_start_at: response.data.billing_start_at,
-            billing_end_at: response.data.billing_end_at
-          }
-        }));
-        setWorkspaceId('');
-        toast.success('Workspace added successfully');
-      } else {
-        throw new Error('Invalid response format');
-      }
+      const data = await fetchWorkspaceData(workspaceId);
+      setWorkspaces(prev => ({
+        ...prev,
+        [workspaceId]: data
+      }));
+      setWorkspaceId('');
+      toast.success('Workspace added successfully');
     } catch (error) {
       console.error('Error fetching data:', error);
       toast.error(error.message || 'Failed to fetch workspace data');
@@ -171,14 +66,31 @@ const Index = () => {
     }
   };
 
+  const handleRefresh = async () => {
+    if (Object.keys(workspaces).length === 0) return;
+    
+    setRefreshing(true);
+    try {
+      const refreshedData: Record<string, WorkspaceData> = {};
+      for (const id of Object.keys(workspaces)) {
+        try {
+          refreshedData[id] = await fetchWorkspaceData(id);
+        } catch (error) {
+          console.error(`Error refreshing workspace ${id}:`, error);
+          toast.error(`Failed to refresh workspace ${id}`);
+        }
+      }
+      setWorkspaces(refreshedData);
+      toast.success('Workspaces refreshed successfully');
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   return (
     <div className="min-h-screen p-2 relative terminal-effect">
       <div className="matrix-rain" />
       <div className="max-w-5xl mx-auto relative z-10">
-        <h1 className="text-xs mb-2">
-          {'>'} Workspace Command Center <span className="animate-blink">_</span>
-        </h1>
-
         <div className="mb-2">
           <TerminalInput
             label="> Add Workspace ID"
@@ -188,11 +100,11 @@ const Index = () => {
           />
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1.5">
-          {Object.entries(workspaces).map(([id, data]) => (
-            <WorkspaceCard key={id} data={data} />
-          ))}
-        </div>
+        <WorkspaceGrid 
+          workspaces={workspaces} 
+          onRefresh={handleRefresh}
+          isRefreshing={refreshing}
+        />
       </div>
     </div>
   );
