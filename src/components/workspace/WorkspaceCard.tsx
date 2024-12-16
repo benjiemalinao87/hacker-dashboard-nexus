@@ -36,30 +36,32 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
       <div className="space-y-2">
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-terminal-dim/30 border border-terminal-green/20" />
-            <span className="text-terminal-green font-mono">{label}</span>
+            <div className="w-2 h-2 rounded-full bg-terminal-green/20" />
+            <span className="text-terminal-green/80 font-mono">{label}</span>
           </div>
           <span className={cn(
             "font-mono",
-            isCritical ? "text-terminal-magenta" : "text-terminal-green"
+            isCritical ? "text-terminal-magenta" : "text-terminal-green/80"
           )}>
             {used}/{total}
           </span>
         </div>
-        <div className="h-1.5 bg-terminal-dim/30 rounded-sm overflow-hidden">
-          <div 
-            className={cn(
-              "h-full rounded-sm transition-all duration-1000 ease-out progress-heartbeat",
-              isCritical ? "bg-terminal-magenta" : "bg-terminal-green",
-              "relative after:absolute after:top-0 after:left-0 after:right-0 after:bottom-0",
-              "after:bg-gradient-to-r after:from-transparent after:via-white/10 after:to-transparent",
-              "after:animate-[shimmer_2s_infinite]"
-            )}
-            style={{ 
-              width: `${percentage}%`,
-              animation: isCritical ? 'heartbeat 1s ease-in-out infinite' : 'heartbeat 2s ease-in-out infinite'
-            }}
-          />
+        <div className="relative w-full">
+          <div className="h-1 bg-terminal-dim/20 rounded-full overflow-hidden">
+            <div 
+              className={cn(
+                "h-full rounded-full transition-all duration-1000 ease-out progress-heartbeat",
+                isCritical ? "bg-terminal-magenta" : "bg-terminal-green",
+                "relative after:absolute after:top-0 after:left-0 after:right-0 after:bottom-0",
+                "after:bg-gradient-to-r after:from-transparent after:via-white/10 after:to-transparent",
+                "after:animate-[shimmer_2s_infinite]"
+              )}
+              style={{ 
+                width: `${percentage}%`,
+                animation: isCritical ? 'heartbeat 1s ease-in-out infinite' : 'heartbeat 2s ease-in-out infinite'
+              }}
+            />
+          </div>
         </div>
       </div>
     );
@@ -67,11 +69,11 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
 
   return (
     <Card className="bg-black/40 backdrop-blur-sm border border-terminal-green/20 shadow-lg shadow-terminal-green/5 hover:shadow-terminal-green/10 hover:border-terminal-green/30 transition-all duration-300">
-      <CardContent className="p-4">
+      <CardContent className="p-6">
         <div className="flex justify-between items-start mb-6">
           <div>
-            <h3 className="text-terminal-green text-base font-mono truncate max-w-[200px]">{data.name}</h3>
-            <p className="text-terminal-green/60 text-xs font-mono">{data.plan}</p>
+            <h3 className="text-terminal-green text-lg font-mono truncate max-w-[200px]">{data.name}</h3>
+            <p className="text-terminal-green/60 text-xs font-mono mt-0.5">{data.plan}</p>
           </div>
           <Button
             variant="ghost"
@@ -83,15 +85,15 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
           </Button>
         </div>
 
-        <div className="flex gap-6">
-          <div className="w-24 h-24 animate-[spin_10s_linear_infinite]">
-            <PieChart width={96} height={96}>
+        <div className="flex gap-8">
+          <div className="w-28 h-28 animate-[spin_10s_linear_infinite] flex-shrink-0">
+            <PieChart width={112} height={112}>
               <Pie
                 data={pieData}
-                cx={48}
-                cy={48}
-                innerRadius={32}
-                outerRadius={46}
+                cx={56}
+                cy={56}
+                innerRadius={38}
+                outerRadius={54}
                 fill="#00ff00"
                 paddingAngle={4}
                 dataKey="value"
@@ -105,7 +107,7 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
             </PieChart>
           </div>
           
-          <div className="flex-1 space-y-5">
+          <div className="flex-1 space-y-6 pt-1">
             <UsageBar 
               used={data.bot_user_used}
               total={data.bot_user_limit}
