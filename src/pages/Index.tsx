@@ -24,7 +24,7 @@ interface WorkspaceData {
 const formatDate = (dateString: string) => {
   try {
     const date = parseISO(dateString);
-    return format(date, 'MMMM do, yyyy');
+    return format(date, 'MMM do, yyyy');
   } catch (error) {
     console.error('Error formatting date:', dateString, error);
     return 'Invalid date';
@@ -32,56 +32,41 @@ const formatDate = (dateString: string) => {
 };
 
 const WorkspaceCard = ({ data }: { data: WorkspaceData }) => (
-  <div className="border border-terminal-green p-4 mb-4 text-sm max-w-md">
-    <h2 className="text-lg font-bold mb-2">{`> (R) ${data.name}`}</h2>
-    <p className="text-sm mb-1">{`> Timezone: ${data.timezone}`}</p>
-    <p className="text-sm mb-3">{`> Plan: ${data.plan}`}</p>
+  <div className="border border-terminal-green p-3 mb-3 text-xs max-w-sm">
+    <h2 className="text-sm font-bold mb-1">{`> ${data.name}`}</h2>
+    <p className="mb-0.5">{`> ${data.timezone} | ${data.plan}`}</p>
     
-    <div className="space-y-3">
+    <div className="space-y-2 my-2">
       <div>
-        <p className="text-sm mb-1">{`> Bot Users: `}
+        <p className="mb-0.5">{`> Bot Users: `}
           <span className={data.bot_user_used >= data.bot_user_limit * 0.9 ? 'text-terminal-magenta' : ''}>
-            {data.bot_user_used} / {data.bot_user_limit}
+            {data.bot_user_used}/{data.bot_user_limit}
           </span>
         </p>
-        <ProgressBar
-          label=""
-          used={data.bot_user_used}
-          total={data.bot_user_limit}
-        />
+        <ProgressBar label="" used={data.bot_user_used} total={data.bot_user_limit} />
       </div>
 
       <div>
-        <p className="text-sm mb-1">{`> Bots: `}
+        <p className="mb-0.5">{`> Bots: `}
           <span className={data.bot_used >= data.bot_limit * 0.9 ? 'text-terminal-magenta' : ''}>
-            {data.bot_used} / {data.bot_limit}
+            {data.bot_used}/{data.bot_limit}
           </span>
         </p>
-        <ProgressBar
-          label=""
-          used={data.bot_used}
-          total={data.bot_limit}
-        />
+        <ProgressBar label="" used={data.bot_used} total={data.bot_limit} />
       </div>
 
       <div>
-        <p className="text-sm mb-1">{`> Members: `}
+        <p className="mb-0.5">{`> Members: `}
           <span className={data.member_used >= data.member_limit * 0.9 ? 'text-terminal-magenta' : ''}>
-            {data.member_used} / {data.member_limit}
+            {data.member_used}/{data.member_limit}
           </span>
         </p>
-        <ProgressBar
-          label=""
-          used={data.member_used}
-          total={data.member_limit}
-        />
+        <ProgressBar label="" used={data.member_used} total={data.member_limit} />
       </div>
     </div>
 
-    <div className="mt-3 text-sm text-terminal-dim">
-      <p>{`> Billing Period:`}</p>
-      <p className="ml-4">Start: {formatDate(data.billing_start_at)}</p>
-      <p className="ml-4">End: {formatDate(data.billing_end_at)}</p>
+    <div className="text-terminal-dim text-[10px]">
+      <p>{`> ${formatDate(data.billing_start_at)} - ${formatDate(data.billing_end_at)}`}</p>
     </div>
   </div>
 );
@@ -141,36 +126,34 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen p-8 relative terminal-effect">
+    <div className="min-h-screen p-4 relative terminal-effect">
       <div className="matrix-rain" />
       <div className="max-w-4xl mx-auto relative z-10">
-        <div className="mb-8">
-          <h1 className="text-2xl mb-4 font-bold">
-            {'>'} Workspace Command Center <span className="animate-blink">_</span>
-          </h1>
+        <h1 className="text-xl mb-4 font-bold">
+          {'>'} Workspace Command Center <span className="animate-blink">_</span>
+        </h1>
 
-          <div className="flex gap-4 items-end mb-8">
-            <div className="flex-1">
-              <TerminalInput
-                label="Add Workspace ID"
-                value={workspaceId}
-                onChange={setWorkspaceId}
-              />
-            </div>
-            <button
-              onClick={fetchData}
-              disabled={loading}
-              className="h-10 px-4 border border-terminal-green hover:bg-terminal-green hover:text-terminal-black transition-colors disabled:opacity-50"
-            >
-              {loading ? '...' : '> Add'}
-            </button>
+        <div className="flex items-center gap-2 mb-6">
+          <div className="flex-1">
+            <TerminalInput
+              label="Add Workspace ID"
+              value={workspaceId}
+              onChange={setWorkspaceId}
+            />
           </div>
+          <button
+            onClick={fetchData}
+            disabled={loading}
+            className="h-8 px-3 border border-terminal-green hover:bg-terminal-green hover:text-terminal-black transition-colors disabled:opacity-50 self-end mb-2"
+          >
+            {loading ? '...' : '> Add'}
+          </button>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Object.entries(workspaces).map(([id, data]) => (
-              <WorkspaceCard key={id} data={data} />
-            ))}
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {Object.entries(workspaces).map(([id, data]) => (
+            <WorkspaceCard key={id} data={data} />
+          ))}
         </div>
       </div>
     </div>
