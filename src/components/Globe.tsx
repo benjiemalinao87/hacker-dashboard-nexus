@@ -21,75 +21,51 @@ const Globe = () => {
     // Globe parameters
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    const radius = Math.min(canvas.width, canvas.height) * 0.2;
-    
-    // Map coordinates (simplified world map points)
-    const mapPoints = [
-      // North America
-      [[0.2, 0.2], [0.4, 0.2], [0.4, 0.4], [0.2, 0.4]],
-      // South America
-      [[0.3, 0.5], [0.4, 0.5], [0.4, 0.7], [0.3, 0.7]],
-      // Europe
-      [[0.5, 0.2], [0.6, 0.2], [0.6, 0.3], [0.5, 0.3]],
-      // Africa
-      [[0.5, 0.4], [0.6, 0.4], [0.6, 0.6], [0.5, 0.6]],
-      // Asia
-      [[0.7, 0.2], [0.9, 0.2], [0.9, 0.5], [0.7, 0.5]],
-      // Australia
-      [[0.8, 0.6], [0.9, 0.6], [0.9, 0.7], [0.8, 0.7]],
-    ];
+    const radius = Math.min(canvas.width, canvas.height) * 0.25;
 
-    // Packet system
-    type Packet = {
-      startX: number;
-      startY: number;
-      endX: number;
-      endY: number;
-      progress: number;
+    // World map as a grid of points
+    const worldMapPoints: [number, number][] = [];
+    for (let lat = -60; lat <= 60; lat += 5) {
+      for (let lng = -180; lng <= 180; lng += 5) {
+        worldMapPoints.push([lng, lat]);
+      }
+    }
+
+    // Convert lat/lng to screen coordinates
+    const projectPoint = (lng: number, lat: number) => {
+      const x = centerX + (radius * Math.cos(lat * Math.PI / 180) * Math.sin(lng * Math.PI / 180));
+      const y = centerY + (radius * Math.sin(lat * Math.PI / 180) * 0.5);
+      return [x, y];
+    };
+
+    // Spike system
+    type Spike = {
+      x: number;
+      y: number;
+      length: number;
+      angle: number;
+      color: string;
       speed: number;
+      growth: number;
     };
 
-    const packets: Packet[] = [];
-    
-    const createPacket = () => {
-      // Select random continents for start and end points
-      const continent1 = mapPoints[Math.floor(Math.random() * mapPoints.length)];
-      const continent2 = mapPoints[Math.floor(Math.random() * mapPoints.length)];
-      
-      // Get random points within the continents
-      const point1 = continent1[Math.floor(Math.random() * continent1.length)];
-      const point2 = continent2[Math.floor(Math.random() * continent2.length)];
-      
-      const angle1 = point1[0] * Math.PI * 2;
-      const angle2 = point2[0] * Math.PI * 2;
-      
-      packets.push({
-        startX: centerX + Math.cos(angle1) * radius,
-        startY: centerY + Math.sin(angle1) * radius * 0.5,
-        endX: centerX + Math.cos(angle2) * radius,
-        endY: centerY + Math.sin(angle2) * radius * 0.5,
-        progress: 0,
-        speed: 0.005 + Math.random() * 0.01
-      });
-    };
+    const spikes: Spike[] = [];
 
-    const drawContinents = () => {
-      mapPoints.forEach(continent => {
-        ctx.beginPath();
-        continent.forEach((point, index) => {
-          const x = centerX + (point[0] - 0.5) * radius * 2;
-          const y = centerY + (point[1] - 0.5) * radius;
-          if (index === 0) {
-            ctx.moveTo(x, y);
-          } else {
-            ctx.lineTo(x, y);
-          }
-        });
-        ctx.closePath();
-        ctx.fillStyle = 'rgba(0, 255, 0, 0.1)';
-        ctx.fill();
-        ctx.strokeStyle = 'rgba(0, 255, 0, 0.3)';
-        ctx.stroke();
+    const createSpike = () => {
+      const point = worldMapPoints[Math.floor(Math.random() * worldMapPoints.length)];
+      const [x, y] = projectPoint(point[0], point[1]);
+      
+      const colors = ['rgba(0, 255, 255, ', 'rgba(0, 255, 0, ', 'rgba(0, 150, 255, '];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      
+      spikes.push({
+        x,
+        y,
+        length: 0,
+        angle: Math.random() * Math.PI * 2,
+        color,
+        speed: 0.5 + Math.random() * 2,
+        growth: 20 + Math.random() * 80
       });
     };
 
@@ -97,75 +73,52 @@ const Globe = () => {
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw base globe
+      // Draw globe outline with glow effect
       ctx.beginPath();
-      ctx.ellipse(centerX, centerY, radius, radius * 0.5, 0, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(0, 255, 0, 0.2)';
+      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+      ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Draw continents
-      drawContinents();
+      // Draw glowing effect
+      const gradient = ctx.createRadialGradient(centerX, centerY, radius - 5, centerX, centerY, radius + 5);
+      gradient.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
+      gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      ctx.fillStyle = gradient;
+      ctx.fill();
 
-      // Draw latitude lines
-      for (let i = 1; i < 5; i++) {
+      // Draw world map points
+      worldMapPoints.forEach(([lng, lat]) => {
+        const [x, y] = projectPoint(lng, lat);
         ctx.beginPath();
-        ctx.ellipse(
-          centerX,
-          centerY,
-          radius * (i / 5),
-          (radius * (i / 5)) * 0.5,
-          0,
-          0,
-          Math.PI * 2
-        );
-        ctx.strokeStyle = 'rgba(0, 255, 0, 0.1)';
-        ctx.stroke();
-      }
+        ctx.arc(x, y, 0.5, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0, 150, 255, 0.3)';
+        ctx.fill();
+      });
 
-      // Draw longitude lines
-      for (let i = 0; i < 8; i++) {
-        const angle = (i / 8) * Math.PI * 2;
-        ctx.beginPath();
-        ctx.moveTo(
-          centerX + Math.cos(angle) * radius,
-          centerY + Math.sin(angle) * radius * 0.5
-        );
-        ctx.lineTo(
-          centerX + Math.cos(angle + Math.PI) * radius,
-          centerY + Math.sin(angle + Math.PI) * radius * 0.5
-        );
-        ctx.strokeStyle = 'rgba(0, 255, 0, 0.1)';
-        ctx.stroke();
-      }
-
-      // Update and draw packets
-      packets.forEach((packet, index) => {
-        packet.progress += packet.speed;
+      // Update and draw spikes
+      spikes.forEach((spike, index) => {
+        spike.length += spike.speed;
         
-        if (packet.progress >= 1) {
-          packets.splice(index, 1);
+        if (spike.length >= spike.growth) {
+          spikes.splice(index, 1);
           return;
         }
 
-        const currentX = packet.startX + (packet.endX - packet.startX) * packet.progress;
-        const currentY = packet.startY + (packet.endY - packet.startY) * packet.progress;
+        const endX = spike.x + Math.cos(spike.angle) * spike.length;
+        const endY = spike.y + Math.sin(spike.angle) * spike.length;
 
         ctx.beginPath();
-        ctx.arc(currentX, currentY, 2, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(0, 255, 0, ${1 - Math.abs(packet.progress - 0.5) * 2})`;
-        ctx.fill();
-
-        // Draw trail
-        ctx.beginPath();
-        ctx.moveTo(packet.startX, packet.startY);
-        ctx.lineTo(currentX, currentY);
-        ctx.strokeStyle = `rgba(0, 255, 0, ${0.2 * (1 - packet.progress)})`;
+        ctx.moveTo(spike.x, spike.y);
+        ctx.lineTo(endX, endY);
+        ctx.strokeStyle = `${spike.color}${1 - spike.length / spike.growth})`;
+        ctx.lineWidth = 2;
         ctx.stroke();
       });
 
-      // Create new packets randomly
-      if (Math.random() < 0.1 && packets.length < 20) {
-        createPacket();
+      // Create new spikes randomly
+      if (Math.random() < 0.1 && spikes.length < 50) {
+        createSpike();
       }
 
       requestAnimationFrame(animate);
@@ -182,6 +135,7 @@ const Globe = () => {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-0"
+      style={{ background: 'rgb(0, 0, 0)' }}
     />
   );
 };
