@@ -34,14 +34,14 @@ const Index = () => {
     <SidePanelProvider>
       <div className="min-h-screen flex flex-col relative terminal-effect">
         <Globe />
-        <div className="flex-1 p-4 w-full max-w-[calc(100%-420px)] relative z-10">
+        <div className="flex-1 px-6 py-4 w-full max-w-[calc(100%-400px)] relative z-10">
           <WorkspaceHeader 
             onRefresh={refreshAllWorkspaces}
             loading={loading}
             hasWorkspaces={Object.keys(workspaces).length > 0}
           />
 
-          <div className="mb-4">
+          <div className="mb-6">
             <TerminalInput
               label="> Enter Workspace ID"
               value={workspaceId}

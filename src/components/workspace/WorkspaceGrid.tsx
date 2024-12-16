@@ -9,7 +9,7 @@ interface WorkspaceGridProps {
 
 export const WorkspaceGrid: React.FC<WorkspaceGridProps> = ({ workspaces, onDelete }) => {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1.5">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
       {Object.entries(workspaces).map(([id, data]) => (
         <WorkspaceCard 
           key={id} 
