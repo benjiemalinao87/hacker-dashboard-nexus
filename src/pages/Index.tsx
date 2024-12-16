@@ -23,10 +23,8 @@ interface WorkspaceData {
 
 const formatDate = (dateString: string) => {
   try {
-    // First try to parse the date string
     const date = parseISO(dateString);
-    // Then format it
-    return format(date, 'PPP');
+    return format(date, 'MMMM do, yyyy');
   } catch (error) {
     console.error('Error formatting date:', dateString, error);
     return 'Invalid date';
@@ -34,31 +32,56 @@ const formatDate = (dateString: string) => {
 };
 
 const WorkspaceCard = ({ data }: { data: WorkspaceData }) => (
-  <div className="border border-terminal-green p-4 mb-4 text-sm">
-    <h2 className="text-lg mb-2">{'>'} {data.name}</h2>
-    <p className="text-xs mb-1">{'>'} Timezone: {data.timezone}</p>
-    <p className="text-xs mb-2">{'>'} Plan: {data.plan}</p>
+  <div className="border border-terminal-green p-4 mb-4 text-sm max-w-md">
+    <h2 className="text-lg font-bold mb-2">{`> (R) ${data.name}`}</h2>
+    <p className="text-sm mb-1">{`> Timezone: ${data.timezone}`}</p>
+    <p className="text-sm mb-3">{`> Plan: ${data.plan}`}</p>
     
-    <ProgressBar
-      label="Bot Users"
-      used={data.bot_user_used}
-      total={data.bot_user_limit}
-    />
-    <ProgressBar
-      label="Bots"
-      used={data.bot_used}
-      total={data.bot_limit}
-    />
-    <ProgressBar
-      label="Members"
-      used={data.member_used}
-      total={data.member_limit}
-    />
+    <div className="space-y-3">
+      <div>
+        <p className="text-sm mb-1">{`> Bot Users: `}
+          <span className={data.bot_user_used >= data.bot_user_limit * 0.9 ? 'text-terminal-magenta' : ''}>
+            {data.bot_user_used} / {data.bot_user_limit}
+          </span>
+        </p>
+        <ProgressBar
+          label=""
+          used={data.bot_user_used}
+          total={data.bot_user_limit}
+        />
+      </div>
 
-    <div className="mt-3 text-xs text-terminal-dim">
-      <p>{'>'} Billing Period:</p>
-      <p className="ml-2">Start: {formatDate(data.billing_start_at)}</p>
-      <p className="ml-2">End: {formatDate(data.billing_end_at)}</p>
+      <div>
+        <p className="text-sm mb-1">{`> Bots: `}
+          <span className={data.bot_used >= data.bot_limit * 0.9 ? 'text-terminal-magenta' : ''}>
+            {data.bot_used} / {data.bot_limit}
+          </span>
+        </p>
+        <ProgressBar
+          label=""
+          used={data.bot_used}
+          total={data.bot_limit}
+        />
+      </div>
+
+      <div>
+        <p className="text-sm mb-1">{`> Members: `}
+          <span className={data.member_used >= data.member_limit * 0.9 ? 'text-terminal-magenta' : ''}>
+            {data.member_used} / {data.member_limit}
+          </span>
+        </p>
+        <ProgressBar
+          label=""
+          used={data.member_used}
+          total={data.member_limit}
+        />
+      </div>
+    </div>
+
+    <div className="mt-3 text-sm text-terminal-dim">
+      <p>{`> Billing Period:`}</p>
+      <p className="ml-4">Start: {formatDate(data.billing_start_at)}</p>
+      <p className="ml-4">End: {formatDate(data.billing_end_at)}</p>
     </div>
   </div>
 );
