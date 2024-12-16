@@ -11,7 +11,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ used, total }) => {
   const isNearLimit = used >= total * 0.9;
 
   return (
-    <div className="progress-bar h-1">
+    <div className="progress-bar h-[3px]">
       <div
         className={`progress-bar-fill ${isNearLimit ? 'bg-[#ea384c]' : ''}`}
         style={{ width: `${percentage}%` }}

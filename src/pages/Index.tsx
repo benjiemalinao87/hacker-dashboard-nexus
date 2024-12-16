@@ -32,15 +32,15 @@ const formatDate = (dateString: string) => {
 };
 
 const WorkspaceCard = ({ data }: { data: WorkspaceData }) => (
-  <div className="border border-terminal-green p-2 text-xs">
-    <div className="flex justify-between items-start mb-1">
-      <h2 className="font-bold">{`> ${data.name}`}</h2>
-      <span className="text-[10px] text-terminal-dim">{`${data.timezone} | ${data.plan}`}</span>
+  <div className="border border-terminal-green p-1.5 text-[10px]">
+    <div className="flex justify-between items-start">
+      <h2 className="font-bold text-[11px]">{`> ${data.name}`}</h2>
+      <span className="text-[9px] text-terminal-dim">{`${data.timezone} | ${data.plan}`}</span>
     </div>
     
-    <div className="space-y-1">
+    <div className="space-y-0.5 mt-0.5">
       <div>
-        <div className="flex justify-between text-[10px]">
+        <div className="flex justify-between text-[9px]">
           <span>{`> Bot Users`}</span>
           <span className={data.bot_user_used >= data.bot_user_limit * 0.9 ? 'text-terminal-magenta' : ''}>
             {data.bot_user_used}/{data.bot_user_limit}
@@ -50,7 +50,7 @@ const WorkspaceCard = ({ data }: { data: WorkspaceData }) => (
       </div>
 
       <div>
-        <div className="flex justify-between text-[10px]">
+        <div className="flex justify-between text-[9px]">
           <span>{`> Bots`}</span>
           <span className={data.bot_used >= data.bot_limit * 0.9 ? 'text-terminal-magenta' : ''}>
             {data.bot_used}/{data.bot_limit}
@@ -60,7 +60,7 @@ const WorkspaceCard = ({ data }: { data: WorkspaceData }) => (
       </div>
 
       <div>
-        <div className="flex justify-between text-[10px]">
+        <div className="flex justify-between text-[9px]">
           <span>{`> Members`}</span>
           <span className={data.member_used >= data.member_limit * 0.9 ? 'text-terminal-magenta' : ''}>
             {data.member_used}/{data.member_limit}
@@ -70,7 +70,7 @@ const WorkspaceCard = ({ data }: { data: WorkspaceData }) => (
       </div>
     </div>
 
-    <div className="text-[10px] text-terminal-dim mt-1">
+    <div className="text-[8px] text-terminal-dim mt-0.5">
       <span>{`> ${formatDate(data.billing_start_at)} - ${formatDate(data.billing_end_at)}`}</span>
     </div>
   </div>
@@ -131,14 +131,14 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen p-4 relative terminal-effect">
+    <div className="min-h-screen p-2 relative terminal-effect">
       <div className="matrix-rain" />
-      <div className="max-w-2xl mx-auto relative z-10">
-        <h1 className="text-sm mb-4">
+      <div className="max-w-5xl mx-auto relative z-10">
+        <h1 className="text-xs mb-2">
           {'>'} Workspace Command Center <span className="animate-blink">_</span>
         </h1>
 
-        <div className="mb-4">
+        <div className="mb-2">
           <TerminalInput
             label="> Add Workspace ID"
             value={workspaceId}
@@ -147,7 +147,7 @@ const Index = () => {
           />
         </div>
 
-        <div className="grid grid-cols-1 gap-2">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1.5">
           {Object.entries(workspaces).map(([id, data]) => (
             <WorkspaceCard key={id} data={data} />
           ))}
