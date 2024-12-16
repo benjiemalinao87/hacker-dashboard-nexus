@@ -93,7 +93,8 @@ const Index = () => {
 
   return (
     <div className="min-h-screen p-8 relative terminal-effect">
-      <div className="max-w-4xl mx-auto">
+      <div className="matrix-rain" />
+      <div className="max-w-4xl mx-auto relative z-10">
         <div className="mb-8">
           <h1 className="text-2xl mb-4 font-bold">
             {'>'} Workspace Command Center <span className="animate-blink">_</span>

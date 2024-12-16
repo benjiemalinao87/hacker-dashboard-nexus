@@ -27,6 +27,47 @@ body {
   pointer-events: none;
 }
 
+.matrix-rain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.matrix-rain::before {
+  content: "01";
+  position: absolute;
+  top: -50%;
+  left: 50%;
+  font-size: 24px;
+  text-shadow: 0 0 5px theme('colors.terminal.green');
+  animation: matrix-rain 8s linear infinite;
+}
+
+@keyframes matrix-rain {
+  0% {
+    transform: translateY(-50%) rotate(0deg);
+  }
+  100% {
+    transform: translateY(150vh) rotate(360deg);
+  }
+}
+
+.matrix-rain::after {
+  content: "10";
+  position: absolute;
+  top: -50%;
+  left: 25%;
+  font-size: 18px;
+  text-shadow: 0 0 5px theme('colors.terminal.green');
+  animation: matrix-rain 6s linear infinite;
+  animation-delay: -2s;
+}
+
 .progress-bar {
   background: theme('colors.terminal.dim');
   border: 1px solid theme('colors.terminal.green');
