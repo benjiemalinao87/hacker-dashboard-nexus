@@ -52,6 +52,7 @@ serve(async (req) => {
 
     if (!response.ok) {
       if (response.status === 401) {
+        console.error('Authentication failed with uchat.com.au API. Full response:', responseText)
         return new Response(
           JSON.stringify({ 
             error: 'Authentication failed. Please check your token.',
