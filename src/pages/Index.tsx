@@ -3,7 +3,7 @@ import { TerminalInput } from '../components/TerminalInput';
 import { ProgressBar } from '../components/ProgressBar';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 
 const AUTH_TOKEN = "XmVtXZLJbznJYVlpBQxgZ7X1SxYGqSyQfB2RJUJPeHOlejPOC5tG0MRK1FAK";
 
@@ -20,6 +20,18 @@ interface WorkspaceData {
   billing_start_at: string;
   billing_end_at: string;
 }
+
+const formatDate = (dateString: string) => {
+  try {
+    // First try to parse the date string
+    const date = parseISO(dateString);
+    // Then format it
+    return format(date, 'PPP');
+  } catch (error) {
+    console.error('Error formatting date:', dateString, error);
+    return 'Invalid date';
+  }
+};
 
 const WorkspaceCard = ({ data }: { data: WorkspaceData }) => (
   <div className="border border-terminal-green p-4 mb-4 text-sm">
@@ -45,8 +57,8 @@ const WorkspaceCard = ({ data }: { data: WorkspaceData }) => (
 
     <div className="mt-3 text-xs text-terminal-dim">
       <p>{'>'} Billing Period:</p>
-      <p className="ml-2">Start: {format(new Date(data.billing_start_at), 'PPP')}</p>
-      <p className="ml-2">End: {format(new Date(data.billing_end_at), 'PPP')}</p>
+      <p className="ml-2">Start: {formatDate(data.billing_start_at)}</p>
+      <p className="ml-2">End: {formatDate(data.billing_end_at)}</p>
     </div>
   </div>
 );
