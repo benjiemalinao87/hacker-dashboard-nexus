@@ -72,7 +72,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
           style={{ 
             width: `${percentage}%`,
             transform: 'translateX(0)',
-            animation: percentage >= 95 ? 'heartbeat 1.5s ease-in-out infinite' : 'heartbeat 2s ease-in-out infinite'
+            animation: percentage >= 95 ? 'heartbeat 0.8s ease-in-out infinite' : 'heartbeat 1.2s ease-in-out infinite'
           }}
         />
       </div>

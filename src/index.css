@@ -124,8 +124,16 @@ body {
     transform: scaleX(1);
     opacity: 1;
   }
+  25% {
+    transform: scaleX(1.05);
+    opacity: 0.8;
+  }
   50% {
-    transform: scaleX(0.98);
+    transform: scaleX(0.95);
+    opacity: 0.9;
+  }
+  75% {
+    transform: scaleX(1.05);
     opacity: 0.8;
   }
   100% {
@@ -135,6 +143,6 @@ body {
 }
 
 .progress-heartbeat {
-  animation: heartbeat 2s ease-in-out infinite;
+  animation: heartbeat 1.2s ease-in-out infinite;
   transform-origin: left;
 }

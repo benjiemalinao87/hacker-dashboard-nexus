@@ -34,11 +34,13 @@ const UsageBar = ({ used, total, label }: { used: number; total: number; label: 
         <div 
           className={cn(
             "h-full rounded-full transition-all duration-300",
-            isCritical ? "bg-terminal-magenta" : "bg-terminal-green"
+            isCritical ? "bg-terminal-magenta" : "bg-terminal-green",
+            "progress-heartbeat"
           )}
           style={{ 
             width: `${Math.min(percentage, 100)}%`,
-            transform: 'translateX(0)'
+            transform: 'translateX(0)',
+            animation: isCritical ? 'heartbeat 0.8s ease-in-out infinite' : 'heartbeat 1.2s ease-in-out infinite'
           }}
         />
       </div>
@@ -80,7 +82,7 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
         </div>
 
         <div className="flex gap-4 items-center">
-          <div className="w-12 h-12 flex-shrink-0">
+          <div className="w-12 h-12 flex-shrink-0 animate-[spin_3s_linear_infinite]">
             <PieChart width={48} height={48}>
               <Pie
                 data={pieData}
@@ -93,9 +95,15 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
                 dataKey="value"
                 startAngle={90}
                 endAngle={-270}
+                animationBegin={0}
+                animationDuration={2000}
               >
                 {pieData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={COLORS[index % COLORS.length]}
+                    className="transition-all duration-300"
+                  />
                 ))}
               </Pie>
             </PieChart>
