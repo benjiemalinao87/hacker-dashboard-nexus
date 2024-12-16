@@ -33,33 +33,27 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
     const isCritical = percentage >= 90;
 
     return (
-      <div className="space-y-2">
+      <div className="flex flex-col space-y-1.5">
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-terminal-green/20" />
-            <span className="text-terminal-green/80 font-mono">{label}</span>
+            <div className="w-2 h-2 rounded-full bg-terminal-green" />
+            <span className="text-terminal-green font-mono">{label}</span>
           </div>
           <span className={cn(
             "font-mono",
-            isCritical ? "text-terminal-magenta" : "text-terminal-green/80"
+            isCritical ? "text-terminal-magenta" : "text-terminal-green"
           )}>
             {used}/{total}
           </span>
         </div>
-        <div className="relative w-full">
-          <div className="h-1 bg-terminal-dim/20 rounded-full overflow-hidden">
+        <div className="w-full overflow-hidden">
+          <div className="relative h-1 bg-terminal-dim rounded-full">
             <div 
               className={cn(
-                "h-full rounded-full transition-all duration-1000 ease-out progress-heartbeat",
-                isCritical ? "bg-terminal-magenta" : "bg-terminal-green",
-                "relative after:absolute after:top-0 after:left-0 after:right-0 after:bottom-0",
-                "after:bg-gradient-to-r after:from-transparent after:via-white/10 after:to-transparent",
-                "after:animate-[shimmer_2s_infinite]"
+                "absolute top-0 left-0 h-full rounded-full transition-all duration-300",
+                isCritical ? "bg-terminal-magenta" : "bg-terminal-green"
               )}
-              style={{ 
-                width: `${percentage}%`,
-                animation: isCritical ? 'heartbeat 1s ease-in-out infinite' : 'heartbeat 2s ease-in-out infinite'
-              }}
+              style={{ width: `${percentage}%` }}
             />
           </div>
         </div>
@@ -70,10 +64,10 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
   return (
     <Card className="bg-black/40 backdrop-blur-sm border border-terminal-green/20 shadow-lg shadow-terminal-green/5 hover:shadow-terminal-green/10 hover:border-terminal-green/30 transition-all duration-300">
       <CardContent className="p-6">
-        <div className="flex justify-between items-start mb-6">
+        <div className="flex justify-between items-start mb-8">
           <div>
             <h3 className="text-terminal-green text-lg font-mono truncate max-w-[200px]">{data.name}</h3>
-            <p className="text-terminal-green/60 text-xs font-mono mt-0.5">{data.plan}</p>
+            <p className="text-terminal-green/60 text-xs font-mono mt-1">{data.plan}</p>
           </div>
           <Button
             variant="ghost"
@@ -107,7 +101,7 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
             </PieChart>
           </div>
           
-          <div className="flex-1 space-y-6 pt-1">
+          <div className="flex-1 space-y-6">
             <UsageBar 
               used={data.bot_user_used}
               total={data.bot_user_limit}
