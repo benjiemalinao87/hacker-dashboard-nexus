@@ -3,11 +3,13 @@ import { TerminalInput } from '../components/TerminalInput';
 import { ProgressBar } from '../components/ProgressBar';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { format } from 'date-fns';
 
 const AUTH_TOKEN = "XmVtXZLJbznJYVlpBQxgZ7X1SxYGqSyQfB2RJUJPeHOlejPOC5tG0MRK1FAK";
 
 interface WorkspaceData {
   name: string;
+  timezone: string;
   plan: string;
   bot_user_used: number;
   bot_user_limit: number;
@@ -15,12 +17,15 @@ interface WorkspaceData {
   bot_limit: number;
   member_used: number;
   member_limit: number;
+  billing_start_at: string;
+  billing_end_at: string;
 }
 
 const WorkspaceCard = ({ data }: { data: WorkspaceData }) => (
   <div className="border border-terminal-green p-4 mb-4 text-sm">
     <h2 className="text-lg mb-2">{'>'} {data.name}</h2>
-    <p className="text-xs mb-2">{'>'} {data.plan}</p>
+    <p className="text-xs mb-1">{'>'} Timezone: {data.timezone}</p>
+    <p className="text-xs mb-2">{'>'} Plan: {data.plan}</p>
     
     <ProgressBar
       label="Bot Users"
@@ -37,6 +42,12 @@ const WorkspaceCard = ({ data }: { data: WorkspaceData }) => (
       used={data.member_used}
       total={data.member_limit}
     />
+
+    <div className="mt-3 text-xs text-terminal-dim">
+      <p>{'>'} Billing Period:</p>
+      <p className="ml-2">Start: {format(new Date(data.billing_start_at), 'PPP')}</p>
+      <p className="ml-2">End: {format(new Date(data.billing_end_at), 'PPP')}</p>
+    </div>
   </div>
 );
 
@@ -69,13 +80,16 @@ const Index = () => {
           ...prev,
           [workspaceId]: {
             name: response.data.name,
+            timezone: response.data.timezone || 'UTC',
             plan: response.data.plan,
             bot_user_used: response.data.bot_user_used,
             bot_user_limit: response.data.bot_user_limit,
             bot_used: response.data.bot_used,
             bot_limit: response.data.bot_limit,
             member_used: response.data.member_used,
-            member_limit: response.data.member_limit
+            member_limit: response.data.member_limit,
+            billing_start_at: response.data.billing_start_at,
+            billing_end_at: response.data.billing_end_at
           }
         }));
         setWorkspaceId('');
