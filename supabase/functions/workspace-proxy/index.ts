@@ -12,9 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const url = new URL(req.url)
-    const workspaceId = url.searchParams.get('workspaceId')
-    const token = url.searchParams.get('token')
+    const { workspaceId, token } = await req.json()
 
     if (!workspaceId || !token) {
       return new Response(
