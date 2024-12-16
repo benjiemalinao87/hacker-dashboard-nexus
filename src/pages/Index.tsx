@@ -6,6 +6,7 @@ import { WorkspaceGrid } from '@/components/workspace/WorkspaceGrid';
 import { WorkspaceData } from '@/types/workspace';
 import { Button } from '@/components/ui/button';
 import { RotateCw } from 'lucide-react';
+import Globe from '@/components/Globe';
 
 const AUTH_TOKEN = "XmVtXZLJbznJYVlpBQxgZ7X1SxYGqSyQfB2RJUJPeHOlejPOC5tG0MRK1FAK";
 
@@ -97,7 +98,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen p-2 relative terminal-effect">
-      <div className="matrix-rain" />
+      <Globe />
       <div className="max-w-5xl mx-auto relative z-10">
         <div className="flex justify-between items-center mb-2">
           <h1 className="text-xs">
