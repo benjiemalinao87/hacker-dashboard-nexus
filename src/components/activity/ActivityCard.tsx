@@ -63,7 +63,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
       <div className="w-full bg-terminal-dim h-1.5 rounded-full mb-3 overflow-hidden">
         <div 
           className={cn(
-            "h-full rounded-full transition-all duration-1000 ease-out",
+            "h-full rounded-full transition-all duration-1000 ease-out progress-heartbeat",
             percentage > 90 ? "bg-red-500" : percentage > 75 ? "bg-yellow-600" : "bg-terminal-green",
             "relative after:absolute after:top-0 after:left-0 after:right-0 after:bottom-0",
             "after:bg-gradient-to-r after:from-transparent after:via-terminal-green/30 after:to-transparent",
@@ -72,7 +72,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
           style={{ 
             width: `${percentage}%`,
             transform: 'translateX(0)',
-            animation: 'slideIn 1s ease-out'
+            animation: percentage >= 95 ? 'heartbeat 1.5s ease-in-out infinite' : 'heartbeat 2s ease-in-out infinite'
           }}
         />
       </div>
