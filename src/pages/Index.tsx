@@ -32,44 +32,45 @@ const formatDate = (dateString: string) => {
 };
 
 const WorkspaceCard = ({ data }: { data: WorkspaceData }) => (
-  <div className="border border-terminal-green p-2 text-[10px]">
-    <div className="flex justify-between items-center mb-1">
-      <span>{`> ${data.name} | ${data.timezone} | ${data.plan}`}</span>
+  <div className="border border-terminal-green p-2 text-xs">
+    <div className="flex justify-between items-start mb-1">
+      <h2 className="font-bold">{`> ${data.name}`}</h2>
+      <span className="text-[10px] text-terminal-dim">{`${data.timezone} | ${data.plan}`}</span>
     </div>
     
     <div className="space-y-1">
-      <div className="flex items-center gap-2">
-        <span>{`> Bot Users:`}</span>
-        <span className={data.bot_user_used >= data.bot_user_limit * 0.9 ? 'text-terminal-magenta' : ''}>
-          {`${data.bot_user_used}/${data.bot_user_limit}`}
-        </span>
-        <div className="flex-1">
-          <ProgressBar used={data.bot_user_used} total={data.bot_user_limit} />
+      <div>
+        <div className="flex justify-between text-[10px]">
+          <span>{`> Bot Users`}</span>
+          <span className={data.bot_user_used >= data.bot_user_limit * 0.9 ? 'text-terminal-magenta' : ''}>
+            {data.bot_user_used}/{data.bot_user_limit}
+          </span>
         </div>
+        <ProgressBar used={data.bot_user_used} total={data.bot_user_limit} />
       </div>
 
-      <div className="flex items-center gap-2">
-        <span>{`> Bots:`}</span>
-        <span className={data.bot_used >= data.bot_limit * 0.9 ? 'text-terminal-magenta' : ''}>
-          {`${data.bot_used}/${data.bot_limit}`}
-        </span>
-        <div className="flex-1">
-          <ProgressBar used={data.bot_used} total={data.bot_limit} />
+      <div>
+        <div className="flex justify-between text-[10px]">
+          <span>{`> Bots`}</span>
+          <span className={data.bot_used >= data.bot_limit * 0.9 ? 'text-terminal-magenta' : ''}>
+            {data.bot_used}/{data.bot_limit}
+          </span>
         </div>
+        <ProgressBar used={data.bot_used} total={data.bot_limit} />
       </div>
 
-      <div className="flex items-center gap-2">
-        <span>{`> Members:`}</span>
-        <span className={data.member_used >= data.member_limit * 0.9 ? 'text-terminal-magenta' : ''}>
-          {`${data.member_used}/${data.member_limit}`}
-        </span>
-        <div className="flex-1">
-          <ProgressBar used={data.member_used} total={data.member_limit} />
+      <div>
+        <div className="flex justify-between text-[10px]">
+          <span>{`> Members`}</span>
+          <span className={data.member_used >= data.member_limit * 0.9 ? 'text-terminal-magenta' : ''}>
+            {data.member_used}/{data.member_limit}
+          </span>
         </div>
+        <ProgressBar used={data.member_used} total={data.member_limit} />
       </div>
     </div>
 
-    <div className="text-terminal-dim mt-1">
+    <div className="text-[10px] text-terminal-dim mt-1">
       <span>{`> ${formatDate(data.billing_start_at)} - ${formatDate(data.billing_end_at)}`}</span>
     </div>
   </div>
