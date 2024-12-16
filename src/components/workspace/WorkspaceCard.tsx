@@ -18,9 +18,9 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
   return (
     <Card className="bg-black/40 backdrop-blur-sm border-terminal-green/20 hover:bg-black/60 transition-all duration-300">
       <CardContent className="p-4">
-        <div className="flex justify-between items-start mb-2">
+        <div className="flex justify-between items-start mb-4">
           <div>
-            <h3 className="text-terminal-green text-sm font-mono truncate">{data.name}</h3>
+            <h3 className="text-terminal-green text-sm font-mono truncate max-w-[200px]">{data.name}</h3>
             <p className="text-terminal-green/60 text-xs">{data.plan}</p>
           </div>
           <Button
