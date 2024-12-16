@@ -6,19 +6,14 @@ import { cn } from '@/lib/utils';
 import { WorkspaceData } from '@/types/workspace';
 
 interface RightSidebarProps {
-  workspaces: Record<string, WorkspaceData>;
+  workspaces?: Record<string, WorkspaceData>;
 }
 
-export const RightSidebar: React.FC<RightSidebarProps> = ({ workspaces }) => {
+export const RightSidebar: React.FC<RightSidebarProps> = ({ workspaces = {} }) => {
   const { isPinned, togglePin } = useSidePanel();
 
-  const activities = Object.entries(workspaces).map(([id, workspace]) => ({
-    status: workspace.bot_user_used >= workspace.bot_user_limit * 0.9 ? 'Critical' : 'Normal',
-    timeAgo: 'Just now', // Placeholder for time ago
-    percentage: (workspace.bot_user_used / workspace.bot_user_limit) * 100,
-    type: 'Bot Usage',
-    userName: workspace.name,
-  }));
+  // Create activities array only if workspaces exist and have entries
+  const workspaceEntries = Object.entries(workspaces || {});
 
   return (
     <div 
@@ -43,9 +38,15 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({ workspaces }) => {
         </div>
       </div>
       <div className="space-y-2 overflow-y-auto h-[calc(100vh-6rem)] pr-2 custom-scrollbar">
-        {activities.length > 0 ? activities.map((activity, index) => (
-          <ActivityCard key={index} {...activity} />
-        )) : (
+        {workspaceEntries.length > 0 ? (
+          workspaceEntries.map(([id, workspace]) => (
+            <ActivityCard 
+              key={id}
+              workspace={workspace}
+              type="bot_usage"
+            />
+          ))
+        ) : (
           <div className="text-terminal-green/60 text-sm">No workspaces added.</div>
         )}
       </div>

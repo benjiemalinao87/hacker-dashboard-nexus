@@ -39,6 +39,11 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
     ? (workspace.bot_user_used / workspace.bot_user_limit) * 100
     : (workspace.member_used / workspace.member_limit) * 100;
 
+  // Only show the card if the percentage is above 90%
+  if (percentage < 90) {
+    return null;
+  }
+
   const status = getStatus(percentage);
 
   return (

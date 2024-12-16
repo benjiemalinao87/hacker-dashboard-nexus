@@ -169,7 +169,7 @@ const Index = () => {
         </div>
         
         <LimitWarningFooter workspaces={workspaces} />
-        <RightSidebar />
+        <RightSidebar workspaces={workspaces} />
       </div>
     </SidePanelProvider>
   );
