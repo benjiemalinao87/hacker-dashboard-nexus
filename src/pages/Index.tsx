@@ -23,26 +23,38 @@ const Index = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
+      console.log('Fetching workspace data...');
       const response = await fetch(
         `https://www.uchat.com.au/api/partner/workspace/${workspaceId}`,
         {
           headers: {
             'Authorization': `Bearer ${token}`,
-            'accept': 'application/json'
-          }
+            'accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          mode: 'cors' // Explicitly set CORS mode
         }
       );
       
       if (!response.ok) {
-        throw new Error('Failed to fetch workspace data');
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      const data = await response.json();
-      setData(data);
+      const jsonData = await response.json();
+      console.log('Received data:', jsonData);
+      setData(jsonData);
       toast.success('Data fetched successfully');
     } catch (error) {
       console.error('Error fetching data:', error);
-      toast.error('Failed to fetch workspace data');
+      let errorMessage = 'Failed to fetch workspace data';
+      
+      if (error instanceof Error) {
+        if (error.message.includes('CORS')) {
+          errorMessage = 'CORS error: Unable to access the API directly. Please ensure you have the correct permissions or try using a proxy server.';
+        }
+      }
+      
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
