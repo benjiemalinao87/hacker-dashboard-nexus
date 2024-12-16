@@ -140,13 +140,11 @@ const Index = () => {
         <div className="flex items-center gap-2 mb-4">
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <span className="text-[10px]">{`> Add Workspace ID:`}</span>
-              <div className="flex-1">
-                <TerminalInput
-                  value={workspaceId}
-                  onChange={setWorkspaceId}
-                />
-              </div>
+              <TerminalInput
+                label="Add Workspace ID"
+                value={workspaceId}
+                onChange={setWorkspaceId}
+              />
             </div>
           </div>
           <button
