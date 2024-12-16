@@ -4,6 +4,7 @@ import { WorkspaceData } from '@/types/workspace';
 import { Button } from '../ui/button';
 import { Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { PieChart, Pie, Cell } from 'recharts';
 
 interface WorkspaceCardProps {
   id: string;
@@ -15,6 +16,16 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
   const botUsagePercentage = (data.bot_user_used / data.bot_user_limit) * 100;
   const botPercentage = (data.bot_used / data.bot_limit) * 100;
   const memberPercentage = (data.member_used / data.member_limit) * 100;
+
+  const totalUsage = (botUsagePercentage + botPercentage + memberPercentage) / 3;
+  const remainingUsage = 100 - totalUsage;
+
+  const pieData = [
+    { name: 'Used', value: totalUsage },
+    { name: 'Available', value: remainingUsage }
+  ];
+
+  const COLORS = ['#00ff00', '#004400'];
 
   const UsageBar = ({ used, total, label }: { used: number; total: number; label: string }) => {
     const percentage = (used / total) * 100;
@@ -71,25 +82,48 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
             <Trash2 className="h-4 w-4" />
           </Button>
         </div>
-        
-        <div className="space-y-4">
-          <UsageBar 
-            used={data.bot_user_used}
-            total={data.bot_user_limit}
-            label="Bot Users"
-          />
+
+        <div className="flex gap-4">
+          <div className="w-24 h-24 animate-[spin_10s_linear_infinite]">
+            <PieChart width={96} height={96}>
+              <Pie
+                data={pieData}
+                cx={48}
+                cy={48}
+                innerRadius={30}
+                outerRadius={46}
+                fill="#00ff00"
+                paddingAngle={2}
+                dataKey="value"
+                startAngle={90}
+                endAngle={-270}
+              >
+                {pieData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+            </PieChart>
+          </div>
           
-          <UsageBar 
-            used={data.bot_used}
-            total={data.bot_limit}
-            label="Bots"
-          />
-          
-          <UsageBar 
-            used={data.member_used}
-            total={data.member_limit}
-            label="Members"
-          />
+          <div className="flex-1 space-y-4">
+            <UsageBar 
+              used={data.bot_user_used}
+              total={data.bot_user_limit}
+              label="Bot Users"
+            />
+            
+            <UsageBar 
+              used={data.bot_used}
+              total={data.bot_limit}
+              label="Bots"
+            />
+            
+            <UsageBar 
+              used={data.member_used}
+              total={data.member_limit}
+              label="Members"
+            />
+          </div>
         </div>
       </CardContent>
     </Card>
