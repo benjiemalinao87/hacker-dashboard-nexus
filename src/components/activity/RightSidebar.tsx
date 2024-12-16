@@ -3,50 +3,22 @@ import { ActivityCard } from './ActivityCard';
 import { Pin, PinOff } from 'lucide-react';
 import { useSidePanel } from '@/contexts/SidePanelContext';
 import { cn } from '@/lib/utils';
+import { WorkspaceData } from '@/types/workspace';
 
-const mockActivities = [
-  {
-    status: 'Warning' as const,
-    timeAgo: '2h ago',
-    percentage: 92,
-    type: 'Bot Usage' as const,
-    userName: 'Tesla Motors',
-  },
-  {
-    status: 'Critical' as const,
-    timeAgo: '30m ago',
-    percentage: 98,
-    type: 'Member Limit' as const,
-    userName: 'SpaceX',
-  },
-  {
-    status: 'Normal' as const,
-    timeAgo: '1h ago',
-    percentage: 45,
-    type: 'Bot Usage' as const,
-    userName: 'Boring Company',
-  },
-  {
-    status: 'Warning' as const,
-    timeAgo: '4h ago',
-    percentage: 88,
-    type: 'Storage Usage' as const,
-    userName: 'Neuralink',
-  },
-  {
-    status: 'Critical' as const,
-    timeAgo: '3h ago',
-    percentage: 95,
-    type: 'API Calls' as const,
-    userName: 'Starlink',
-  }
-].filter(activity => 
-  (activity.type === 'Bot Usage' && activity.percentage >= 90) || 
-  (activity.type === 'Member Limit' && activity.percentage >= 90)
-);
+interface RightSidebarProps {
+  workspaces: Record<string, WorkspaceData>;
+}
 
-export const RightSidebar = () => {
+export const RightSidebar: React.FC<RightSidebarProps> = ({ workspaces }) => {
   const { isPinned, togglePin } = useSidePanel();
+
+  const activities = Object.entries(workspaces).map(([id, workspace]) => ({
+    status: workspace.bot_user_used >= workspace.bot_user_limit * 0.9 ? 'Critical' : 'Normal',
+    timeAgo: 'Just now', // Placeholder for time ago
+    percentage: (workspace.bot_user_used / workspace.bot_user_limit) * 100,
+    type: 'Bot Usage',
+    userName: workspace.name,
+  }));
 
   return (
     <div 
@@ -71,9 +43,11 @@ export const RightSidebar = () => {
         </div>
       </div>
       <div className="space-y-2 overflow-y-auto h-[calc(100vh-6rem)] pr-2 custom-scrollbar">
-        {mockActivities.map((activity, index) => (
+        {activities.length > 0 ? activities.map((activity, index) => (
           <ActivityCard key={index} {...activity} />
-        ))}
+        )) : (
+          <div className="text-terminal-green/60 text-sm">No workspaces added.</div>
+        )}
       </div>
     </div>
   );

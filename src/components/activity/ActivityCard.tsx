@@ -1,61 +1,56 @@
 import React from 'react';
-import { Users, Database, HardDrive, Wifi } from 'lucide-react';
+import { Users, Database } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { WorkspaceData } from '@/types/workspace';
 
 interface ActivityCardProps {
-  status: 'Warning' | 'Critical' | 'Normal';
-  timeAgo: string;
-  percentage: number;
-  type: 'Bot Usage' | 'Member Limit' | 'Storage Usage' | 'API Calls';
-  userName: string;
+  workspace: WorkspaceData;
+  type: 'bot_usage' | 'member_limit';
 }
 
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'Normal':
-      return 'bg-terminal-green text-black';
-    case 'Warning':
-      return 'bg-yellow-600 text-black';
-    case 'Critical':
-      return 'bg-red-500 text-white';
-    default:
-      return 'bg-gray-500';
-  }
+const getStatusColor = (percentage: number) => {
+  if (percentage >= 95) return 'bg-red-500 text-white';
+  if (percentage >= 90) return 'bg-yellow-600 text-black';
+  return 'bg-terminal-green text-black';
 };
 
 const getIcon = (type: string) => {
   switch (type) {
-    case 'Bot Usage':
+    case 'bot_usage':
       return <Users className="w-4 h-4" />;
-    case 'Member Limit':
+    case 'member_limit':
       return <Database className="w-4 h-4" />;
-    case 'Storage Usage':
-      return <HardDrive className="w-4 h-4" />;
-    case 'API Calls':
-      return <Wifi className="w-4 h-4" />;
     default:
       return <Users className="w-4 h-4" />;
   }
 };
 
+const getStatus = (percentage: number) => {
+  if (percentage >= 95) return 'Critical';
+  if (percentage >= 90) return 'Warning';
+  return 'Normal';
+};
+
 export const ActivityCard: React.FC<ActivityCardProps> = ({
-  status,
-  timeAgo,
-  percentage,
+  workspace,
   type,
-  userName,
 }) => {
+  const percentage = type === 'bot_usage' 
+    ? (workspace.bot_user_used / workspace.bot_user_limit) * 100
+    : (workspace.member_used / workspace.member_limit) * 100;
+
+  const status = getStatus(percentage);
+
   return (
     <div className="bg-black/40 backdrop-blur-sm rounded-lg p-3 mb-2 hover:bg-black/60 transition-all duration-300 border border-terminal-green/20 animate-fade-in">
       <div className="flex justify-between items-center mb-2">
         <div className="flex items-center gap-2">
-          <span className={cn("px-2 py-0.5 rounded text-xs font-medium", getStatusColor(status))}>
+          <span className={cn("px-2 py-0.5 rounded text-xs font-medium", getStatusColor(percentage))}>
             {status}
           </span>
-          <span className="text-terminal-green/60 text-xs">{timeAgo}</span>
         </div>
         <div className="flex items-center gap-1">
-          <span className="text-terminal-green text-sm">{percentage}%</span>
+          <span className="text-terminal-green text-sm">{percentage.toFixed(0)}%</span>
           <span className="text-terminal-green/60">↗</span>
         </div>
       </div>
@@ -82,9 +77,11 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
           <span className="p-1.5 bg-terminal-black/50 rounded">
             {getIcon(type)}
           </span>
-          <span className="text-sm text-terminal-green/90">{type}</span>
+          <span className="text-sm text-terminal-green/90">
+            {type === 'bot_usage' ? 'Bot Usage' : 'Member Limit'}
+          </span>
         </div>
-        <span className="text-sm text-terminal-green/60">{userName}</span>
+        <span className="text-sm text-terminal-green/60">{workspace.name}</span>
       </div>
     </div>
   );

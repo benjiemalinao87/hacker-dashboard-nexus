@@ -11,10 +11,9 @@ import { RightSidebar } from '@/components/activity/RightSidebar';
 import { LimitWarningFooter } from '@/components/workspace/LimitWarningFooter';
 import { SidePanelProvider } from '@/contexts/SidePanelContext';
 
-// Make sure this token matches exactly what's expected by the API
 const AUTH_TOKEN = "XmVtXZLJbznJYVlpBQxgZ7X1SxYGqSyQfB2RJUJPeHOlejPOC5tG0MRK1FAK";
 const MAX_RETRIES = 3;
-const RETRY_DELAY = 1000; // 1 second
+const RETRY_DELAY = 1000;
 
 const Index = () => {
   const [workspaceId, setWorkspaceId] = useState('');
@@ -140,7 +139,7 @@ const Index = () => {
     <SidePanelProvider>
       <div className="min-h-screen flex flex-col relative terminal-effect">
         <Globe />
-        <div className="flex-1 p-4 w-full relative z-10">
+        <div className="flex-1 p-4 w-full max-w-[calc(100%-420px)] relative z-10">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-xs">
               {'>'} Workspace Command Center <span className="animate-blink">_</span>
