@@ -22,11 +22,11 @@ export const WorkspaceCard = ({ data }: { data: WorkspaceData }) => (
       <span className="text-[9px] text-terminal-dim">{`${data.timezone} | ${data.plan}`}</span>
     </div>
     
-    <div className="space-y-0.5 mt-0.5">
+    <div className="space-y-1.5 mt-1.5">
       <div className="flex items-center gap-1">
         <UsagePieChart used={data.bot_user_used} total={data.bot_user_limit} />
         <div className="flex-1">
-          <div className="flex justify-between text-[9px]">
+          <div className="flex justify-between text-[9px] mb-1">
             <span>{`> Bot Users`}</span>
             <span className={data.bot_user_used >= data.bot_user_limit * 0.9 ? 'text-terminal-magenta' : ''}>
               {data.bot_user_used}/{data.bot_user_limit}
@@ -39,7 +39,7 @@ export const WorkspaceCard = ({ data }: { data: WorkspaceData }) => (
       <div className="flex items-center gap-1">
         <UsagePieChart used={data.bot_used} total={data.bot_limit} />
         <div className="flex-1">
-          <div className="flex justify-between text-[9px]">
+          <div className="flex justify-between text-[9px] mb-1">
             <span>{`> Bots`}</span>
             <span className={data.bot_used >= data.bot_limit * 0.9 ? 'text-terminal-magenta' : ''}>
               {data.bot_used}/{data.bot_limit}
@@ -52,7 +52,7 @@ export const WorkspaceCard = ({ data }: { data: WorkspaceData }) => (
       <div className="flex items-center gap-1">
         <UsagePieChart used={data.member_used} total={data.member_limit} />
         <div className="flex-1">
-          <div className="flex justify-between text-[9px]">
+          <div className="flex justify-between text-[9px] mb-1">
             <span>{`> Members`}</span>
             <span className={data.member_used >= data.member_limit * 0.9 ? 'text-terminal-magenta' : ''}>
               {data.member_used}/{data.member_limit}
@@ -63,7 +63,7 @@ export const WorkspaceCard = ({ data }: { data: WorkspaceData }) => (
       </div>
     </div>
 
-    <div className="text-[8px] text-terminal-dim mt-0.5">
+    <div className="text-[8px] text-terminal-dim mt-1.5">
       <span>{`> ${formatDate(data.billing_start_at)} - ${formatDate(data.billing_end_at)}`}</span>
     </div>
   </div>
