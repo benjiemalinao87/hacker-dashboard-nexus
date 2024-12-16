@@ -10,6 +10,7 @@ import Globe from '@/components/Globe';
 import { RightSidebar } from '@/components/activity/RightSidebar';
 import { LimitWarningFooter } from '@/components/workspace/LimitWarningFooter';
 
+// Make sure this token matches exactly what's expected by the API
 const AUTH_TOKEN = "XmVtXZLJbznJYVlpBQxgZ7X1SxYGqSyQfB2RJUJPeHOC5tG0MRK1FAK";
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000; // 1 second
@@ -24,31 +25,37 @@ const Index = () => {
       console.log(`Attempting to fetch workspace ${id} (attempt ${retryCount + 1}/${MAX_RETRIES})`);
       
       const { data: response, error } = await supabase.functions.invoke('workspace-proxy', {
-        body: { workspaceId: id.trim(), token: AUTH_TOKEN }
+        body: { 
+          workspaceId: id.trim(),
+          token: AUTH_TOKEN
+        }
       });
       
       if (error) {
+        console.error('Supabase function error:', error);
         throw error;
+      }
+      
+      if (!response || !response.data) {
+        console.error('Invalid response format:', response);
+        throw new Error('Invalid response format from API');
       }
       
       console.log('Received data for workspace', id, ':', response);
       
-      if (response.data) {
-        return {
-          name: response.data.name,
-          timezone: response.data.timezone || 'UTC',
-          plan: response.data.plan,
-          bot_user_used: response.data.bot_user_used,
-          bot_user_limit: response.data.bot_user_limit,
-          bot_used: response.data.bot_used,
-          bot_limit: response.data.bot_limit,
-          member_used: response.data.member_used,
-          member_limit: response.data.member_limit,
-          billing_start_at: response.data.billing_start_at,
-          billing_end_at: response.data.billing_end_at
-        };
-      }
-      throw new Error('Invalid response format');
+      return {
+        name: response.data.name,
+        timezone: response.data.timezone || 'UTC',
+        plan: response.data.plan,
+        bot_user_used: response.data.bot_user_used,
+        bot_user_limit: response.data.bot_user_limit,
+        bot_used: response.data.bot_used,
+        bot_limit: response.data.bot_limit,
+        member_used: response.data.member_used,
+        member_limit: response.data.member_limit,
+        billing_start_at: response.data.billing_start_at,
+        billing_end_at: response.data.billing_end_at
+      };
     } catch (error) {
       console.error(`Error fetching workspace ${id} (attempt ${retryCount + 1}):`, error);
       
@@ -129,7 +136,7 @@ const Index = () => {
             size="sm"
             onClick={refreshAllWorkspaces}
             disabled={loading || Object.keys(workspaces).length === 0}
-            className="text-[10px] h-6"
+            className="text-xs h-6"
           >
             <RotateCw className="mr-1 h-3 w-3" />
             Refresh

@@ -22,43 +22,51 @@ serve(async (req) => {
       )
     }
 
-    console.log('Making request for workspace:', workspaceId)
-    console.log('Token length:', token.length, 'First 10 chars:', token.substring(0, 10))
+    // Validate token format
+    if (typeof token !== 'string' || token.length < 10) {
+      console.error('Invalid token format:', { tokenLength: token?.length })
+      return new Response(
+        JSON.stringify({ error: 'Invalid token format' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      )
+    }
+
+    console.log(`Making request for workspace: ${workspaceId}`)
+    console.log(`Using token starting with: ${token.substring(0, 10)}...`)
     
     const apiUrl = `https://www.uchat.com.au/api/partner/workspace/${workspaceId}`
     console.log('Requesting URL:', apiUrl)
     
-    try {
-      const response = await fetch(apiUrl, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      })
-
-      if (!response.ok) {
-        const responseText = await response.text()
-        console.error('API Error Response:', {
-          status: response.status,
-          statusText: response.statusText,
-          body: responseText
-        })
-        throw new Error(`API request failed with status ${response.status}: ${responseText}`)
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
       }
+    })
 
-      const data = await response.json()
-      console.log('Successful response for workspace:', workspaceId)
+    const responseText = await response.text()
+    console.log('API Response status:', response.status)
+    console.log('API Response headers:', Object.fromEntries(response.headers))
+    console.log('API Response body:', responseText)
 
-      return new Response(
-        JSON.stringify(data),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    } catch (fetchError) {
-      console.error('Fetch error:', fetchError)
-      throw new Error(`Network request failed: ${fetchError.message}`)
+    if (!response.ok) {
+      throw new Error(`API request failed with status ${response.status}: ${responseText}`)
     }
+
+    let data
+    try {
+      data = JSON.parse(responseText)
+    } catch (e) {
+      console.error('Failed to parse API response:', e)
+      throw new Error('Invalid JSON response from API')
+    }
+
+    return new Response(
+      JSON.stringify(data),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
   } catch (error) {
     console.error('Error in workspace-proxy:', error)
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
