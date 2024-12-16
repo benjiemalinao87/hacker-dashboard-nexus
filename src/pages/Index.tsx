@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { TerminalInput } from '../components/TerminalInput';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -8,8 +8,9 @@ import { Button } from '@/components/ui/button';
 import { RotateCw } from 'lucide-react';
 import Globe from '@/components/Globe';
 import { RightSidebar } from '@/components/activity/RightSidebar';
+import { LimitWarningFooter } from '@/components/workspace/LimitWarningFooter';
 
-const AUTH_TOKEN = "XmVtXZLJbznJYVlpBQxgZ7X1SxYGqSyQfB2RJUJPeHOlejPOC5tG0MRK1FAK";
+const AUTH_TOKEN = "XmVtXZLJbznJYVlpBQxgZ7X1SxYGqSyQfB2RJUJPeHOC5tG0MRK1FAK";
 
 const Index = () => {
   const [workspaceId, setWorkspaceId] = useState('');
@@ -124,10 +125,10 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen p-2 relative terminal-effect">
+    <div className="min-h-screen flex flex-col relative terminal-effect">
       <Globe />
-      <div className="max-w-6xl mx-auto relative z-10">
-        <div className="flex justify-between items-center mb-2">
+      <div className="flex-1 p-4 w-full relative z-10">
+        <div className="flex justify-between items-center mb-4">
           <h1 className="text-xs">
             {'>'} Workspace Command Center <span className="animate-blink">_</span>
           </h1>
@@ -143,7 +144,7 @@ const Index = () => {
           </Button>
         </div>
 
-        <div className="mb-2">
+        <div className="mb-4">
           <TerminalInput
             label="> Add Workspace ID (separate multiple IDs with commas)"
             value={workspaceId}
@@ -154,6 +155,8 @@ const Index = () => {
 
         <WorkspaceGrid workspaces={workspaces} />
       </div>
+      
+      <LimitWarningFooter workspaces={workspaces} />
       <RightSidebar />
     </div>
   );
