@@ -140,7 +140,7 @@ export const useWorkspaces = () => {
   const addWorkspace = async (id: string) => {
     if (!id) {
       toast.error('Please enter a workspace ID');
-      return;
+      return false;
     }
 
     setLoading(true);
@@ -148,13 +148,31 @@ export const useWorkspaces = () => {
     console.log('Processing workspace ID:', workspaceId);
     
     try {
+      // First check if workspace already exists
+      const { data: existingWorkspace } = await supabase
+        .from('workspaces')
+        .select('id')
+        .eq('id', workspaceId)
+        .single();
+
+      if (existingWorkspace) {
+        toast.error('Workspace already exists');
+        return false;
+      }
+
       const data = await fetchWithRetry(workspaceId);
       
       const { error } = await supabase
         .from('workspaces')
         .insert([{ id: workspaceId, ...data }]);
 
-      if (error) throw error;
+      if (error) {
+        if (error.code === '23505') { // Duplicate key error
+          toast.error('Workspace already exists');
+          return false;
+        }
+        throw error;
+      }
 
       console.log('Successfully fetched workspace data:', data);
       setWorkspaces(prev => ({
