@@ -26,10 +26,6 @@ export const LimitWarningFooter: React.FC<LimitWarningFooterProps> = ({ workspac
         {
           type: 'Members',
           percentage: (workspace.member_used / workspace.member_limit) * 100
-        },
-        {
-          type: 'Bots',
-          percentage: (workspace.bot_used / workspace.bot_limit) * 100
         }
       ];
       
