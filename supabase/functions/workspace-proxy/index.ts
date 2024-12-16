@@ -34,8 +34,13 @@ serve(async (req) => {
       }
     )
 
+    if (!response.ok) {
+      console.error('API Error:', response.status, await response.text())
+      throw new Error(`API request failed with status ${response.status}`)
+    }
+
     const data = await response.json()
-    console.log('API Response:', data);
+    console.log('API Response:', data)
 
     return new Response(
       JSON.stringify(data),

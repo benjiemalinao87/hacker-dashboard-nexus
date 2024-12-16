@@ -26,7 +26,7 @@ const Index = () => {
       throw new Error(error.message);
     }
     
-    console.log('Received data:', response);
+    console.log('Received data for workspace', id, ':', response);
     
     if (response.data) {
       return {
@@ -82,30 +82,38 @@ const Index = () => {
 
     setLoading(true);
     const ids = workspaceId.split(',').map(id => id.trim()).filter(id => id);
+    console.log('Processing workspace IDs:', ids);
     
     try {
       const newWorkspaces: Record<string, WorkspaceData> = {};
+      let successCount = 0;
+      let errorCount = 0;
       
       await Promise.all(
         ids.map(async (id) => {
           try {
             const data = await fetchWorkspaceData(id);
             newWorkspaces[id] = data;
+            successCount++;
           } catch (error) {
             console.error(`Error fetching data for workspace ${id}:`, error);
             toast.error(`Failed to fetch workspace ${id}`);
+            errorCount++;
           }
         })
       );
       
-      setWorkspaces(prev => ({
-        ...prev,
-        ...newWorkspaces
-      }));
+      if (successCount > 0) {
+        setWorkspaces(prev => ({
+          ...prev,
+          ...newWorkspaces
+        }));
+        setWorkspaceId('');
+        toast.success(`Added ${successCount} workspace(s) successfully`);
+      }
       
-      setWorkspaceId('');
-      if (Object.keys(newWorkspaces).length > 0) {
-        toast.success(`Added ${Object.keys(newWorkspaces).length} workspace(s) successfully`);
+      if (errorCount > 0) {
+        toast.error(`Failed to fetch ${errorCount} workspace(s)`);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
