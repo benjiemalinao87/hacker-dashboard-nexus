@@ -64,7 +64,7 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
   return (
     <Card className="bg-black/40 backdrop-blur-sm border border-terminal-green/20 shadow-lg shadow-terminal-green/5 hover:shadow-terminal-green/10 hover:border-terminal-green/30 transition-all duration-300">
       <CardContent className="p-6">
-        <div className="flex justify-between items-start mb-8">
+        <div className="flex justify-between items-start mb-6">
           <div>
             <h3 className="text-terminal-green text-lg font-mono truncate max-w-[200px]">{data.name}</h3>
             <p className="text-terminal-green/60 text-xs font-mono mt-1">{data.plan}</p>
@@ -79,15 +79,15 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
           </Button>
         </div>
 
-        <div className="flex gap-6">
-          <div className="w-20 h-20 flex-shrink-0">
-            <PieChart width={80} height={80}>
+        <div className="flex gap-4">
+          <div className="w-16 h-16 flex-shrink-0">
+            <PieChart width={64} height={64}>
               <Pie
                 data={pieData}
-                cx={40}
-                cy={40}
-                innerRadius={25}
-                outerRadius={38}
+                cx={32}
+                cy={32}
+                innerRadius={20}
+                outerRadius={30}
                 fill="#00ff00"
                 paddingAngle={4}
                 dataKey="value"
@@ -101,7 +101,7 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
             </PieChart>
           </div>
           
-          <div className="flex-1 space-y-6 min-w-0">
+          <div className="flex-1 space-y-4 min-w-0">
             <UsageBar 
               used={data.bot_user_used}
               total={data.bot_user_limit}
