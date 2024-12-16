@@ -19,7 +19,7 @@ const Index = () => {
   const fetchWorkspaceData = async (id: string) => {
     console.log('Fetching workspace data...', id);
     const { data: response, error } = await supabase.functions.invoke('workspace-proxy', {
-      body: { workspaceId: id, token: AUTH_TOKEN }
+      body: { workspaceId: id.trim(), token: AUTH_TOKEN }
     });
     
     if (error) {
@@ -81,14 +81,32 @@ const Index = () => {
     }
 
     setLoading(true);
+    const ids = workspaceId.split(',').map(id => id.trim()).filter(id => id);
+    
     try {
-      const data = await fetchWorkspaceData(workspaceId);
+      const newWorkspaces: Record<string, WorkspaceData> = {};
+      
+      await Promise.all(
+        ids.map(async (id) => {
+          try {
+            const data = await fetchWorkspaceData(id);
+            newWorkspaces[id] = data;
+          } catch (error) {
+            console.error(`Error fetching data for workspace ${id}:`, error);
+            toast.error(`Failed to fetch workspace ${id}`);
+          }
+        })
+      );
+      
       setWorkspaces(prev => ({
         ...prev,
-        [workspaceId]: data
+        ...newWorkspaces
       }));
+      
       setWorkspaceId('');
-      toast.success('Workspace added successfully');
+      if (Object.keys(newWorkspaces).length > 0) {
+        toast.success(`Added ${Object.keys(newWorkspaces).length} workspace(s) successfully`);
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
       toast.error(error.message || 'Failed to fetch workspace data');
@@ -119,7 +137,7 @@ const Index = () => {
 
         <div className="mb-2">
           <TerminalInput
-            label="> Add Workspace ID"
+            label="> Add Workspace ID (separate multiple IDs with commas)"
             value={workspaceId}
             onChange={setWorkspaceId}
             onSubmit={addWorkspace}
