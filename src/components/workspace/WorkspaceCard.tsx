@@ -36,8 +36,8 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
       <div className="space-y-2">
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded-full bg-terminal-dim/30 border border-terminal-green/20" />
-            <span className="text-terminal-green">{label}</span>
+            <div className="w-3 h-3 rounded-full bg-terminal-dim/30 border border-terminal-green/20" />
+            <span className="text-terminal-green font-mono">{label}</span>
           </div>
           <span className={cn(
             "font-mono",
@@ -46,7 +46,7 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
             {used}/{total}
           </span>
         </div>
-        <div className="h-2 bg-terminal-dim rounded-sm overflow-hidden">
+        <div className="h-1.5 bg-terminal-dim/30 rounded-sm overflow-hidden">
           <div 
             className={cn(
               "h-full rounded-sm transition-all duration-1000 ease-out progress-heartbeat",
@@ -66,34 +66,34 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
   };
 
   return (
-    <Card className="bg-black/40 backdrop-blur-sm border-terminal-green/20 hover:bg-black/60 transition-all duration-300">
+    <Card className="bg-black/40 backdrop-blur-sm border border-terminal-green/20 shadow-lg shadow-terminal-green/5 hover:shadow-terminal-green/10 hover:border-terminal-green/30 transition-all duration-300">
       <CardContent className="p-4">
-        <div className="flex justify-between items-start mb-4">
+        <div className="flex justify-between items-start mb-6">
           <div>
-            <h3 className="text-terminal-green text-sm font-mono truncate max-w-[200px]">{data.name}</h3>
-            <p className="text-terminal-green/60 text-xs">{data.plan}</p>
+            <h3 className="text-terminal-green text-base font-mono truncate max-w-[200px]">{data.name}</h3>
+            <p className="text-terminal-green/60 text-xs font-mono">{data.plan}</p>
           </div>
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-terminal-green/60 hover:text-red-500 hover:bg-red-500/20"
+            className="h-8 w-8 text-terminal-green/60 hover:text-terminal-magenta hover:bg-terminal-magenta/10"
             onClick={onDelete}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex gap-6">
           <div className="w-24 h-24 animate-[spin_10s_linear_infinite]">
             <PieChart width={96} height={96}>
               <Pie
                 data={pieData}
                 cx={48}
                 cy={48}
-                innerRadius={30}
+                innerRadius={32}
                 outerRadius={46}
                 fill="#00ff00"
-                paddingAngle={2}
+                paddingAngle={4}
                 dataKey="value"
                 startAngle={90}
                 endAngle={-270}
@@ -105,7 +105,7 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
             </PieChart>
           </div>
           
-          <div className="flex-1 space-y-4">
+          <div className="flex-1 space-y-5">
             <UsageBar 
               used={data.bot_user_used}
               total={data.bot_user_limit}
