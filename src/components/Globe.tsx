@@ -10,7 +10,7 @@ const Globe = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas size
+    // Set canvas size to full viewport
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -18,12 +18,11 @@ const Globe = () => {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Globe parameters
+    // Globe parameters - increase size by adjusting radius
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    const radius = Math.min(canvas.width, canvas.height) * 0.25;
+    const radius = Math.min(canvas.width, canvas.height) * 0.4; // Increased from 0.25 to 0.4
 
-    // Create a denser world map grid
     const worldMapPoints: [number, number][] = [];
     for (let lat = -80; lat <= 80; lat += 3) {
       for (let lng = -180; lng <= 180; lng += 3) {
@@ -59,7 +58,6 @@ const Globe = () => {
       return [x, y, z];
     };
 
-    // Spike system with improved visuals
     type Spike = {
       startLng: number;
       startLat: number;
@@ -185,7 +183,7 @@ const Globe = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0"
+      className="fixed inset-0 pointer-events-none z-0 w-screen h-screen"
       style={{ background: 'rgb(0, 0, 0)' }}
     />
   );

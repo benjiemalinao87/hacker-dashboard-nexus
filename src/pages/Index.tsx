@@ -99,7 +99,7 @@ const Index = () => {
   return (
     <div className="min-h-screen p-2 relative terminal-effect">
       <Globe />
-      <div className="max-w-5xl mx-auto relative z-10">
+      <div className="max-w-6xl mx-auto relative z-10"> {/* Increased from max-w-5xl to max-w-6xl */}
         <div className="flex justify-between items-center mb-2">
           <h1 className="text-xs">
             {'>'} Workspace Command Center <span className="animate-blink">_</span>
