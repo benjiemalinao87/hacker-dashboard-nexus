@@ -12,6 +12,40 @@ interface WorkspaceCardProps {
   onDelete: () => void;
 }
 
+const UsageBar = ({ used, total, label }: { used: number; total: number; label: string }) => {
+  const percentage = (used / total) * 100;
+  const isCritical = percentage >= 90;
+
+  return (
+    <div className="flex flex-col space-y-1.5 w-full">
+      <div className="flex items-center justify-between text-xs">
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-terminal-green" />
+          <span className="text-terminal-green font-mono">{label}</span>
+        </div>
+        <span className={cn(
+          "font-mono",
+          isCritical ? "text-terminal-magenta" : "text-terminal-green"
+        )}>
+          {used}/{total}
+        </span>
+      </div>
+      <div className="w-full h-1 bg-terminal-dim rounded-full overflow-hidden">
+        <div 
+          className={cn(
+            "h-full rounded-full transition-all duration-300",
+            isCritical ? "bg-terminal-magenta" : "bg-terminal-green"
+          )}
+          style={{ 
+            width: `${Math.min(percentage, 100)}%`,
+            transform: 'translateX(0)'
+          }}
+        />
+      </div>
+    </div>
+  );
+};
+
 export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete }) => {
   const botUsagePercentage = (data.bot_user_used / data.bot_user_limit) * 100;
   const botPercentage = (data.bot_used / data.bot_limit) * 100;
@@ -26,41 +60,6 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
   ];
 
   const COLORS = ['#00ff00', '#004400'];
-
-  const UsageBar = ({ used, total, label }: { used: number; total: number; label: string }) => {
-    const percentage = (used / total) * 100;
-    const isWarning = percentage >= 75;
-    const isCritical = percentage >= 90;
-
-    return (
-      <div className="flex flex-col space-y-1.5 w-full">
-        <div className="flex items-center justify-between text-xs">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-terminal-green" />
-            <span className="text-terminal-green font-mono">{label}</span>
-          </div>
-          <span className={cn(
-            "font-mono",
-            isCritical ? "text-terminal-magenta" : "text-terminal-green"
-          )}>
-            {used}/{total}
-          </span>
-        </div>
-        <div className="w-full h-1 bg-terminal-dim rounded-full overflow-hidden">
-          <div 
-            className={cn(
-              "h-full rounded-full transition-all duration-300",
-              isCritical ? "bg-terminal-magenta" : "bg-terminal-green"
-            )}
-            style={{ 
-              width: `${Math.min(percentage, 100)}%`,
-              transform: 'translateX(0)'
-            }}
-          />
-        </div>
-      </div>
-    );
-  };
 
   return (
     <Card className="bg-black/40 backdrop-blur-sm border border-terminal-green/20 shadow-lg shadow-terminal-green/5 hover:shadow-terminal-green/10 hover:border-terminal-green/30 transition-all duration-300">
@@ -80,15 +79,15 @@ export const WorkspaceCard: React.FC<WorkspaceCardProps> = ({ id, data, onDelete
           </Button>
         </div>
 
-        <div className="flex gap-8">
-          <div className="w-28 h-28 flex-shrink-0">
-            <PieChart width={112} height={112}>
+        <div className="flex gap-6">
+          <div className="w-20 h-20 flex-shrink-0">
+            <PieChart width={80} height={80}>
               <Pie
                 data={pieData}
-                cx={56}
-                cy={56}
-                innerRadius={38}
-                outerRadius={54}
+                cx={40}
+                cy={40}
+                innerRadius={25}
+                outerRadius={38}
                 fill="#00ff00"
                 paddingAngle={4}
                 dataKey="value"
